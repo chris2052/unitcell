@@ -1,0 +1,13 @@
+Mesh.MshFileVersion = 2.2;lc = 1.000000e-01;
+l = 1;
+Point(1) = {0, 0, 0, lc};
+Point(2) = {l, 0, 0, lc};
+Point(3) = {l, l, 0, lc};
+Point(4) = {0, l, 0, lc};
+Line(1) = {1, 2};
+Line(2) = {2, 3};
+Line(3) = {3, 4};
+Line(4) = {4, 1};
+Curve Loop(1) = {1, 2, 3, 4};
+Plane Surface(1) = {1};
+Physical Surface(10) = {1};
