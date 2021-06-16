@@ -1,8 +1,9 @@
 clearvars
+close all
 
 filename = 'gmshfile';
 l = 1;
-lc = .25;
+lc = .5;
 
 create_unitcell(filename,l,lc)
 

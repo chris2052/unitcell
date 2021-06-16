@@ -3,13 +3,6 @@ filename = 'newertest';
 fileid = fopen([filename, '.geo'],'w');
 domainPid = 10;
 
-% test with loop
-% id = [1,2,3,4,lc];
-% for i = 1:4
-% fprintf(fileID,'Point(%d) = {%d,%d,%d,%d};\n',i*id);
-% end
-%% Testsection
-
 % force to use legacy *.msh output
 fprintf(fileid, 'Mesh.MshFileVersion = 2.2;');
 

@@ -1,6 +1,7 @@
 function create_unitcell(filename, l, lc, domainPid)
 %CREATE_UNITCELL creates a unitcell with gmsh
-% 
+%   creates and executes gmsh *.geo-file for 2D mesh
+%
 %   filename - string for filename (*.geo added automatic)
 %   l - length of each side
 %   lc - target mesh size
