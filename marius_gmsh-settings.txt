@@ -3,5 +3,3 @@ Mesh.SubdivisionAlgorithm = 1;
 Mesh.Format = 50;
 SetFactory("OpenCASCADE");
 Mesh.RecombinationAlgorithm = 0;
-
-
