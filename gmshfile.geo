@@ -1,4 +1,6 @@
-Mesh.MshFileVersion = 2.2;lc = 6.000000e-02;
+Mesh.MshFileVersion = 2.2;
+Mesh.Algorithm = 8;
+lc = 5.000000e-01;
 l = 1;
 Point(1) = {0, 0, 0, lc};
 Point(2) = {l, 0, 0, lc};
@@ -11,3 +13,4 @@ Line(4) = {4, 1};
 Curve Loop(1) = {1, 2, 3, 4};
 Plane Surface(1) = {1};
 Physical Surface(10) = {1};
+Recombine Surface{10};

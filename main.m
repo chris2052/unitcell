@@ -11,4 +11,4 @@ domainPid = 10;
 [node, nids] = readnodes([filename,'.msh']);
 conn = readelements([filename,'.msh'], domainPid);
 
-plot_mesh(node,conn,'tria3')
+plot_mesh(node,conn,'quad9')

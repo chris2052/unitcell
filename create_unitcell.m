@@ -21,7 +21,8 @@ fileid = fopen([filename, '.geo'],'w');
 % end
 
 % force to use legacy *.msh output
-fprintf(fileid, 'Mesh.MshFileVersion = 2.2;');
+fprintf(fileid, 'Mesh.MshFileVersion = 2.2;\n');
+fprintf(fileid, 'Mesh.Algorithm = 8;\n');
 
 % set characteristic length
 fprintf(fileid, 'lc = %d;\n', lc);
@@ -46,10 +47,12 @@ fprintf(fileid, 'Plane Surface(1) = {1};\n');
 
 fprintf(fileid, 'Physical Surface(%d) = {1};\n', domainPid);
 
+fprintf(fileid, 'Recombine Surface{%d};\n', domainPid);
+
 fclose(fileid);
 
 % generate mesh --> *.msh, -2 (2D); alias >> !gmsh filename.geo -2
-status = system(['gmsh ', filename, '.geo', ' -2']);
+status = system(['gmsh ', filename, '.geo', ' -2 -order 2']);
 
 % open mesh with Gmsh; alias >> !gmsh geofile.msh
 % status = system(['gmsh ', filename, '.msh']); 
