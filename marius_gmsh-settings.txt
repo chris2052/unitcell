@@ -6,14 +6,6 @@ SetFactory("OpenCASCADE");
 Mesh.RecombinationAlgorithm = 0;
 ###
 
-Mesh.SubdivisionAlgorithm
-
-    Mesh subdivision algorithm (0: none, 1: all quadrangles, 2: all hexahedra, 
-    3: barycentric)
-    Default value: 0
-    Saved in: General.OptionsFileName
-
-
 Mesh.Algorithm
 
     2D mesh algorithm (1: MeshAdapt, 2: Automatic, 3: Initial mesh only, 
@@ -22,11 +14,18 @@ Mesh.Algorithm
     Default value: 6
     Saved in: General.OptionsFileName
 
-
 Mesh.RecombinationAlgorithm
 
     Mesh recombination algorithm (0: simple, 1: blossom, 2: simple full-quad, 
     3: blossom full-quad)
     Default value: 1
     Saved in: General.OptionsFileName
+
+Mesh.SubdivisionAlgorithm
+
+    Mesh subdivision algorithm (0: none, 1: all quadrangles, 2: all hexahedra, 
+    3: barycentric)
+    Default value: 0
+    Saved in: General.OptionsFileName
+
 
