@@ -1,22 +1,39 @@
 clear; close all; clc
-
+tic
 %% geometry and material
 
 % node coordinates
-Nodes=[0,0,0;1,0,0;0,1,0;1,1,0]; %Matrix der Knotenkoordinaten
+Nodes=[
+    0, 0, 0;
+    1, 0, 0;
+    0, 1, 0;
+    1, 1, 0]; 
+% Matrix der Knotenkoordinaten
+%    
+%  (-1,1)    3--------------------4 (1,1) 
+%            |                    |
+%            |                    |
+%            |          xi2       |
+%            |          |         |
+%            |          --> xi    |
+%            |                    |
+%            |                    |
+%            |                    |
+%            |                    |
+%  (-1,-1)   1--------------------2 (1,-1) 
 
 % connectivity matrix, last collumn physicID
 Elements0=[1 2 3 4 1];
 
 % Youngs Modulus [N/m^2]. For multiple materials use vector: [E1;E2;...]. 
 % Matrix material index for PnC=1!
-Emod=[2.1e11];
+Emod=[1];
 
 % Poission ratio [-]. For multiple materials use vector: [nue1;nue2;...].
 nue=[0.3];
 
 % Density [kg/m^3]. For multiple materials use vector: [rho1;rho2;...].
-rho=[7850];
+rho=[1];
 
 % Thickness [m]. For multiple values use vector: [thick1;thick2;...].
 thick=[1];
@@ -65,9 +82,10 @@ i=1;
         (i,CornerNodes),:),p,MatProp(idxMat(i),:),PhysModel);
     Elements{i}.K=ElementQMat2DK;
     Elements{i}.M=ElementQMat2DM;
-    Elements{i}.DOFs=reshape(repmat(Elements0(i,1:nodPEle),di,1)...
-        *di-repmat([di-1:-1:0]',1,nodPEle),[],1)';
+    Elements{i}.DOFs=reshape(repmat(Elements0(i,1:nodPEle),di,1)*di...
+        - repmat([di-1:-1:0]',1,nodPEle),[],1)';
 % end
 
 %% Assembling
 % [Ksys, Msys]=FastMatrixAssembly(Elements);
+toc
