@@ -3,27 +3,41 @@ tic
 %% geometry and material
 
 % node coordinates
-Nodes=[
+NodesQ4 = [
     0, 0, 0;
     1, 0, 0;
     0, 1, 0;
-    1, 1, 0]; 
-% Matrix der Knotenkoordinaten
-%    
-%  (-1,1)    3--------------------4 (1,1) 
+    1, 1, 0];
+
+NodesQ9=[
+    0, 0, 0;
+    0.5, 0, 0;
+    1, 0, 0;
+    0, 0.5, 0;
+    0.5, 0.5, 0;
+    1, 0.5, 0;
+    0, 1, 0;
+    0.5, 1, 0;
+    1, 1, 0;
+]; 
+
+Nodes = NodesQ9;
+%                       8
+%      (0,1) 7----------o---------9 (1,1) 
 %            |                    |
 %            |                    |
 %            |          xi2       |
 %            |          |         |
-%            |          --> xi    |
+%          4 o        5 o-> xi1   o 6
 %            |                    |
 %            |                    |
 %            |                    |
 %            |                    |
-%  (-1,-1)   1--------------------2 (1,-1) 
-
+%      (0.0) 1----------o---------3 (1,0) 
+%                       2
+%
 % connectivity matrix, last collumn physicID
-Elements0=[1 2 3 4 1];
+Elements0=[1 2 3 4 5 6 7 8 9 1];
 
 % Youngs Modulus [N/m^2]. For multiple materials use vector: [E1;E2;...]. 
 % Matrix material index for PnC=1!
@@ -43,7 +57,7 @@ thick=[1];
 PhysModel="PlaneStrain";
 
 % order
-p=1;                    
+p=2;                    
 
 %% parameters
 % Anzahl der Knoten pro Element
@@ -60,11 +74,12 @@ MatProp=[Emod,nue,rho,thick];
 numElem=size(Elements0,1);  
 
 % Gibt die Orte des Elementeckknoten innerhalb der "Elements0" Matrix an. 
-% Bei linearen Elementen sind das natürlich direkt die 4 Knoten, bei Elementen 
+% Bei linearen Elementen sind das natuerlich direkt die 4 Knoten, bei Elementen 
 % hoeherer Ordnung muessen eben die Stellen des unteren linken Eckknotens, 
 % unteren rechten Eckknotens,  oberen linken Eckknotens und oberen rechten 
 % Eckknotens angegeben werden.
-CornerNodes=[1 2 3 4];                       
+
+CornerNodes=[1 3 7 9];                       
 di=2;   
 
 
@@ -82,8 +97,8 @@ i=1;
         (i,CornerNodes),:),p,MatProp(idxMat(i),:),PhysModel);
     Elements{i}.K=ElementQMat2DK;
     Elements{i}.M=ElementQMat2DM;
-    Elements{i}.DOFs=reshape(repmat(Elements0(i,1:nodPEle),di,1)*di...
-        - repmat([di-1:-1:0]',1,nodPEle),[],1)';
+%     Elements{i}.DOFs=reshape(repmat(Elements0(i,1:nodPEle),di,1)*di...
+%         - repmat((di-1:-1:0)',1,nodPEle),[],1)';
 % end
 
 %% Assembling
