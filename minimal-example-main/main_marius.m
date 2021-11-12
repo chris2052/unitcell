@@ -1,4 +1,5 @@
-clear; close all; clc
+clearvars 
+close all
 tic
 %% geometry and material
 
