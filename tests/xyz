@@ -1,0 +1,22 @@
+xx = nodes(:,1);
+yy = nodes(:,2);
+
+x1 = xx(1);
+x2 = xx(2);
+x3 = xx(3);
+x4 = xx(4);
+x5 = xx(5);
+x6 = xx(6);
+x7 = xx(7);
+x8 = xx(8);
+x9 = xx(9);
+
+y1 = yy(1);
+y2 = yy(2);
+y3 = yy(3);
+y4 = yy(4);
+y6 = yy(5);
+y6 = yy(6);
+y7 = yy(7);
+y8 = yy(8);
+y9 = yy(9);
