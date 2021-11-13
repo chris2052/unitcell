@@ -1,5 +1,5 @@
-function detJ = detJacobian(xi, eta, nodes)
-    %DETJACOBIAN Summary of this function goes here
+function [detJ, InvJT] = JacobianQuad(xi, eta, nodes)
+    %JACOBIANQUAD Summary of this function goes here
     %   Detailed explanation goes here
     % coordinate scheme:
     % 4--------3
