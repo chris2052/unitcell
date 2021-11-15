@@ -64,15 +64,13 @@ k = zeros(18);
 
 % gauss points 1/sqrt(3)
 % weights w = 1 (no need)
-[xi, eta, w] = gaussQuadrature(order);
+[intNodes, w] = gaussQuadrature(order);
 
 % assembling k using gauss-quadrature
-for n = 1:order
-    for m = 1:order
-        B = b_matrix(xi(n), eta(m), nodes, 'q9');
-        detJ = detJacobian(xi(n), eta(m), nodes);
-        k = k + (t * B' * C * B * detJ) * w(n)*w(m);
-    end
+for n = 1:order^2
+    B = b_matrix(intNodes(n,1), intNodes(n,2), nodes, 'q9');
+    detJ = detJacobian(intNodes(n,1), intNodes(n,2), nodes);
+    k = k + (t * B' * C * B * detJ) * w(n);
 end
 
 toc
