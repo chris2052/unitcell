@@ -1,0 +1,28 @@
+function B = b_matrix(xi, eta, nodes, elemType)
+%B_MATRIX Summary of this function goes here
+%   Detailed explanation goes here
+
+B1 = [
+    1, 0, 0, 0;
+    0, 0, 0, 1;
+    0, 1, 1, 0];
+
+B2 = [
+    invJT, zeros(2);
+    zeros(2), invJT;
+    ];
+
+switch elemType
+    case 'q4'
+        B3 = BQuad4(xi, eta, nodes);
+    case 'q8'
+        B3 = BQuad8(xi, eta, nodes);
+    case 'q9'
+        [shape ,diffs] = shapeQ4(xi, eta, elemType);
+        
+        B3 = BQuad9(xi, eta, nodes);
+end
+
+B = B1*B2*B3;
+
+end

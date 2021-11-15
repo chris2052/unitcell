@@ -10,9 +10,9 @@ nodesQ4 = [
 
 nodesQ9 = [
     0, 0;
-    1, 0;
+    1. 0;
     1, 1;
-    0, 1;
+    0. 1;
     0.5, 0;
     1, 0.5;
     0.5, 1;
@@ -69,7 +69,5 @@ parfor n = 1:numEl
     Elements{n}.K = elementK;
     Elements{n}.M = elementM;
 end
-
-% [Ksys, Msys]=FastMatrixAssembly(Elements);
 
 toc
