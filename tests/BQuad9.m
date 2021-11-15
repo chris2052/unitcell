@@ -1,4 +1,4 @@
-function B = BQuad9_new(xi, eta, nodes)
+function B = BQuad9(xi, eta, nodes)
 
 xx = nodes(:,1);
 yy = nodes(:,2);
