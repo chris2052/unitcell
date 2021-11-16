@@ -9,7 +9,7 @@ Mesh.SubdivisionAlgorithm = 0;
 //
 Mesh.RecombineAll = 1;
 //
-lc = 4;
+lc = 0.1;
 //
 Point(1) = {0, 0, 0, lc};
 Point(4) = {0, 1, 0, lc};
@@ -24,3 +24,10 @@ Line(4) = {4, 1};
 Curve Loop(1) = {1, 2, 3, 4};
 //
 Plane Surface(1) = {1};
+//
+Physical Curve("left", 11) = {4};
+Physical Curve("right", 12) = {2};
+Physical Curve("bottom", 13) = {1};
+Physical Curve("top", 14) = {3};
+//+
+Physical Surface("surf", 1) = {1};
