@@ -28,4 +28,9 @@ Mesh.SubdivisionAlgorithm
     Default value: 0
     Saved in: General.OptionsFileName
 
+Periodic Curve { expression-list } = { expression-list } ;
 
+    Force the mesh of the curves on the left-hand side to match the mesh of the curves on the right-hand side (masters). 
+    If used after meshing, generate the periodic node correspondence information assuming the mesh of the curves on the left-hand 
+    side effectively matches the mesh of the curves on the right-hand side. 
+    This operation triggers a synchronization of the CAD model with the internal Gmsh model.
