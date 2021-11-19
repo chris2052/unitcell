@@ -1,4 +1,4 @@
-function create_unitcell(filename, lc, l, rOut, rIn)
+function createMeshUnitcell(filename, lc, l, rOut, rIn)
     %CREATE_UNITCELL creates a unitcell with gmsh
     %   creates and executes gmsh *.geo-file for 2D mesh
     %   skip rIn to create only one circle
