@@ -116,7 +116,7 @@ disp(f);
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 5;
+nBand = 6;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 144;
