@@ -2,11 +2,13 @@ clearvars
 tic
 %% creating mesh
 
-nameMesh = 'unitcell';
-createMeshUnitcell(nameMesh, .01, 1, .5);
+% nameMesh = 'unitcell';
+% createMeshUnitcell(nameMesh, .02, .05, .0375);
 
 % loading mesh
-evalin('caller', [nameMesh, 'Mesh']);
+% evalin('caller', [nameMesh, 'Mesh']);
+
+newGmsh
 %% input parameters
 % number Elements
 numEl = size(msh.QUADS9, 1);
@@ -19,13 +21,13 @@ nodPEle = size(msh.QUADS9, 2) - 1;
 % For multiple materials use vector: [E1;E2;...].
 
 % Youngs Modulus [N/m^2].
-E = [1; 2];
+E = [.93e6; 2.1e11];
 
 % Poission ratio [-]
-v = [0.3; 0.2];
+v = [0.45; 0.3];
 
 % Density [kg/m^3]
-rho = [1; 1];
+rho = [1250; 7850];
 
 % Thickness [m]
 t = [1; 1];
@@ -75,5 +77,15 @@ parfor n = 1:numEl
         - repmat((dof - 1:-1:0)', 1, nodPEle), [], 1)';
 end
 
+%% global stiffness, mass
 [Ksys, Msys] = FastMatrixAssembly(Elements);
+
+%% drawing mesh
+for k = 1:size(msh.QUADS9, 1)
+    patch(msh.POS(msh.QUADS9(k, 1:4), 1), msh.POS(msh.QUADS9(k, 1:4), 2), ...
+        'w', 'FaceColor', 'none', 'LineStyle', '--', 'EdgeColor', 'k');
+end
+
+axis equal
+
 toc
