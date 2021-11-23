@@ -1,4 +1,4 @@
-function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
+function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, factorMesh)
     %CREATE_UNITCELL creates a unitcell with gmsh
     %   creates and executes gmsh *.geo-file for 2D mesh
     %   skip rIn to create only one circle
@@ -21,6 +21,8 @@ function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
 
     % set characteristic length
     fprintf(fileid, 'lc = %d;\n', lc);
+    fprintf(fileid, 'maxMesh = %d;\n', maxMesh);
+    fprintf(fileid, 'factorMesh = %d;\n', factorMesh);
 
     % set cell length
     fprintf(fileid, 'l1 = %d;\n', l1);
@@ -94,6 +96,10 @@ function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
 
     fprintf(fileid, 'Periodic Curve{2} = {4} Translate{l1, 0, 0};\n');
     fprintf(fileid, 'Periodic Curve{3} = {1} Translate{0, l2, 0};\n');
+
+    fprintf(fileid, 'Mesh.MeshSizeMin = 0;\n');
+    fprintf(fileid, 'Mesh.MeshSizeMax = maxMesh;\n');
+    fprintf(fileid, 'Mesh.MeshSizeFactor = factorMesh;\n');
 
     fprintf(fileid, 'Mesh.ElementOrder = 2;\n');
 
