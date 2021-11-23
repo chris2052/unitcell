@@ -1,19 +1,19 @@
 clearvars
+close
 tic
 %% creating mesh
 
-% nameMesh = 'unitcell';
-% createMeshUnitcell(nameMesh, .02, .05, .0375);
+nameMesh = 'testing';
+createMeshUnitcell(nameMesh, .003, .1, .1, .0375);
 
 % loading mesh
-% evalin('caller', [nameMesh, 'Mesh']);
+evalin('caller', [nameMesh, 'ExportMesh']);
 
-newGmsh
 %% input parameters
 % number Elements
 numEl = size(msh.QUADS9, 1);
 
-% Nodes per Element
+% number Nodes per Element
 nodPEle = size(msh.QUADS9, 2) - 1;
 
 %% material properties
@@ -34,6 +34,7 @@ t = [1; 1];
 
 % material matrix
 matProp = [E, v, rho, t];
+matIdx = msh.QUADS9(:, end);
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -46,6 +47,17 @@ dof = 2;
 
 % global degree of freedom
 gDof = dof * msh.nbNod;
+
+% xy-components, z is 0
+nodesGlob = msh.POS(:, 1:2);
+nodesX = nodesGlob(:, 1);
+nodesY = nodesGlob(:, 2);
+
+connGlob = msh.QUADS9(:, 1:9);
+
+quadsCorner = msh.QUADS9(:, 1:4);
+nodesCornerX = nodesX(quadsCorner);
+nodesCornerY = nodesY(quadsCorner);
 
 % scheme of the natural coordinate system (order = 2)
 %                       7
@@ -65,15 +77,17 @@ gDof = dof * msh.nbNod;
 %% generate element stiffnes matrix k
 %
 parfor n = 1:numEl
-    % Connectivity Matrix
-    conn = msh.QUADS9(n, 1:nodPEle);
-    % Node matrix
-    nodes = msh.POS(conn, :);
+    % Connectivity vector per element
+    connEle = msh.QUADS9(n, 1:nodPEle);
+    % Node matrix per element
+    nodesEle = msh.POS(connEle, :);
+    % gettings material properties per element
+    matEle = matProp(matIdx(n), :);
     % generating locale stiffness/mass matrix
-    [elementK, elementM] = Element2D(nodes, order, matProp, physics);
+    [elementK, elementM] = Element2D(nodesEle, order, matEle, physics);
     Elements{n}.K = elementK;
     Elements{n}.M = elementM;
-    Elements{n}.DOFs = reshape(repmat(conn, dof, 1) * dof ...
+    Elements{n}.DOFs = reshape(repmat(connEle, dof, 1) * dof ...
         - repmat((dof - 1:-1:0)', 1, nodPEle), [], 1)';
 end
 
@@ -81,11 +95,12 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% drawing mesh
-for k = 1:size(msh.QUADS9, 1)
-    patch(msh.POS(msh.QUADS9(k, 1:4), 1), msh.POS(msh.QUADS9(k, 1:4), 2), ...
-        'w', 'FaceColor', 'none', 'LineStyle', '--', 'EdgeColor', 'k');
-end
+drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
 axis equal
+
+omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+f = real(sqrt(omega2)/(2*pi));
+disp(f);
 
 toc

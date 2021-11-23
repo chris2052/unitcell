@@ -28,7 +28,7 @@ function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
 
     % define quadradic boundary
     fprintf(fileid, 'Point(1) = {-l1/2, -l2/2, 0, lc};\n');
-    fprintf(fileid, 'Point(2) = {l1/2, -l/2, 0, lc};\n');
+    fprintf(fileid, 'Point(2) = {l1/2, -l2/2, 0, lc};\n');
     fprintf(fileid, 'Point(3) = {l1/2, l2/2, 0, lc};\n');
     fprintf(fileid, 'Point(4) = {-l1/2, l2/2, 0, lc};\n');
 
@@ -92,14 +92,14 @@ function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
     end
 
 
-    fprintf(fileid, 'Periodic Curve{2} = {4} Translate{2*l, 0, 0};\n');
-    fprintf(fileid, 'Periodic Curve{3} = {1} Translate{0, 2*l, 0};\n');
+    fprintf(fileid, 'Periodic Curve{2} = {4} Translate{l1, 0, 0};\n');
+    fprintf(fileid, 'Periodic Curve{3} = {1} Translate{0, l2, 0};\n');
 
     fprintf(fileid, 'Mesh.ElementOrder = 2;\n');
 
     fclose(fileid);
 
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExpMesh.m'])
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExpMesh.msh'])
+    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExportMesh.m'])
+    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExportMesh.msh'])
 
 end
