@@ -34,3 +34,16 @@ Periodic Curve { expression-list } = { expression-list } ;
     If used after meshing, generate the periodic node correspondence information assuming the mesh of the curves on the left-hand 
     side effectively matches the mesh of the curves on the right-hand side. 
     This operation triggers a synchronization of the CAD model with the internal Gmsh model.
+    
+Mesh.Format
+
+    Mesh output format (1: msh, 2: unv, 10: auto, 16: vtk, 19: vrml, 21: mail, 26: pos stat, 27: stl, 28: p3d, 30: mesh, 
+    31: bdf, 32: cgns, 33: med, 34: diff, 38: ir3, 39: inp, 40: ply2, 41: celum, 42: su2, 47: tochnog, 49: neu, 50: matlab)
+    Default value: 10
+    Saved in: General.OptionsFileName
+
+BooleanFragments { boolean-list } { boolean-list }
+
+    Computes all the fragments resulting from the intersection of the entities in the object and in the tool, making all interfaces
+    conformal. When applied to entities of different dimensions, the lower dimensional entities will be automatically embedded 
+    in the higher dimensional entities if they are not on their boundary. 

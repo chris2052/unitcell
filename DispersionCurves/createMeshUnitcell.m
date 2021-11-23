@@ -1,4 +1,4 @@
-function createMeshUnitcell(filename, lc, l, rOut, rIn)
+function createMeshUnitcell(filename, lc, l1, l2, rOut, rIn)
     %CREATE_UNITCELL creates a unitcell with gmsh
     %   creates and executes gmsh *.geo-file for 2D mesh
     %   skip rIn to create only one circle
@@ -16,20 +16,21 @@ function createMeshUnitcell(filename, lc, l, rOut, rIn)
     fprintf(fileid, 'SetFactory("OpenCASCADE");\n');
     fprintf(fileid, 'Mesh.Algorithm = 8;\n');
     fprintf(fileid, 'Mesh.RecombinationAlgorithm = 1;\n');
-    fprintf(fileid, 'Mesh.SubdivisionAlgorithm = 0; \n');
+    fprintf(fileid, 'Mesh.SubdivisionAlgorithm = 1; \n');
     fprintf(fileid, 'Mesh.RecombineAll = 1;\n');
 
     % set characteristic length
     fprintf(fileid, 'lc = %d;\n', lc);
 
     % set cell length
-    fprintf(fileid, 'l = %d;\n', l);
+    fprintf(fileid, 'l1 = %d;\n', l1);
+    fprintf(fileid, 'l2 = %d;\n', l2);
 
     % define quadradic boundary
-    fprintf(fileid, 'Point(1) = {-l, -l, 0, lc};\n');
-    fprintf(fileid, 'Point(2) = {l, -l, 0, lc};\n');
-    fprintf(fileid, 'Point(3) = {l, l, 0, lc};\n');
-    fprintf(fileid, 'Point(4) = {-l, l, 0, lc};\n');
+    fprintf(fileid, 'Point(1) = {-l1/2, -l2/2, 0, lc};\n');
+    fprintf(fileid, 'Point(2) = {l1/2, -l/2, 0, lc};\n');
+    fprintf(fileid, 'Point(3) = {l1/2, l2/2, 0, lc};\n');
+    fprintf(fileid, 'Point(4) = {-l1/2, l2/2, 0, lc};\n');
 
     fprintf(fileid, 'Line(1) = {1, 2};\n');
     fprintf(fileid, 'Line(2) = {2, 3};\n');
@@ -64,7 +65,7 @@ function createMeshUnitcell(filename, lc, l, rOut, rIn)
     fprintf(fileid, 'Plane Surface(1) = {1, 2};\n');
     fprintf(fileid, 'Physical Surface("outerQuad", 1) = {1};\n');
 
-    if nargin > 4
+    if nargin > 5
         % inner circle with radius `rIn`
         fprintf(fileid, 'rIn = %d;\n', rIn);
         fprintf(fileid, 'Point(6) = {rIn, 0, 0, lc};\n');
@@ -90,6 +91,7 @@ function createMeshUnitcell(filename, lc, l, rOut, rIn)
         fprintf(fileid, 'Physical Surface("outerCirc", 2) = {2};\n');
     end
 
+
     fprintf(fileid, 'Periodic Curve{2} = {4} Translate{2*l, 0, 0};\n');
     fprintf(fileid, 'Periodic Curve{3} = {1} Translate{0, 2*l, 0};\n');
 
@@ -97,7 +99,7 @@ function createMeshUnitcell(filename, lc, l, rOut, rIn)
 
     fclose(fileid);
 
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'Mesh.m'])
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'Mesh.msh'])
+    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExpMesh.m'])
+    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'ExpMesh.msh'])
 
 end
