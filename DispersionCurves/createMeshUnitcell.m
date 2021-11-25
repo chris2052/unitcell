@@ -67,7 +67,7 @@ function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, factorMesh
     fprintf(fileid, 'Plane Surface(1) = {1, 2};\n');
     fprintf(fileid, 'Physical Surface("outerQuad", 1) = {1};\n');
 
-    if nargin > 5
+    if rIn > 0
         % inner circle with radius `rIn`
         fprintf(fileid, 'rIn = %d;\n', rIn);
         fprintf(fileid, 'Point(6) = {rIn, 0, 0, lc};\n');
