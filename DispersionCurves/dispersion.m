@@ -4,7 +4,7 @@ close all
 %% creating mesh
 
 nameMesh = 'testing';
-createMeshUnitcell(nameMesh, .1, .1, .075/2, .04/2, 1, 100e-3, 1);
+createMeshUnitcell(nameMesh, .1, .1, .075/2, 0, 1, 20e-3, 1);
 
 % loading mesh
 evalin('caller', [nameMesh, 'ExportMesh']);
@@ -17,9 +17,13 @@ numEl = size(msh.QUADS9, 1);
 nodPEle = size(msh.QUADS9, 2) - 1;
 
 %% material properties
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  -------------------------------- BEGIN ----------------------------------- 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 % Matrix material index for PnC=1!
 % For multiple materials use vector: [E1;E2;...].
-
 % Youngs Modulus [N/m^2].
 E = [.93e6; 2.1e11; 2.1e11];
 
@@ -32,10 +36,6 @@ rho = [1250; 7850; 7850];
 % Thickness [m]
 t = [1; 1; 1];
 
-% material matrix
-matProp = [E, v, rho, t];
-matIdx = msh.QUADS9(:, end);
-
 % (plane) "strain", "stress"
 physics = "strain";
 
@@ -45,6 +45,15 @@ order = 2;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  ---------------------------------- END ------------------------------------ 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% material matrix
+matProp = [E, v, rho, t];
+matIdx = msh.QUADS9(:, end);
+
+%% getting mesh informations
 % global degree of freedom
 gDof = dof * msh.nbNod;
 
@@ -185,8 +194,7 @@ ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
 
 % GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in 
 % x-Richtung vorliegt
-if size(BasisVec, 1) == 1 
-    
+if size(BasisVec, 1) == 1     
     kx0(deltaKxy0 + 2:end) = [];
     ky0(deltaKxy0 + 2:end) = [];
 end
