@@ -5,9 +5,9 @@ run in MATLAB to connect to COMSOL (unix)
 comsol mphserver -port 2036
 
 # directory of file
-/Applications/COMSOL55/Multiphysics/mli/mphstartup.m
+/Applications/COMSOL55/Multiphysics/mli/mphstart.m
 # run file to connect to COMSOL server via MATLAB
-/Applications/COMSOL55/Multiphysics/mli/mphstartup('localhost', 2036)
+/Applications/COMSOL55/Multiphysics/mli/mphstart('localhost', 2036)
       
 
 function mphstart(varargin)
