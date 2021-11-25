@@ -1,0 +1,59 @@
+run in MATLAB to connect to COMSOL (unix)
+
+# starging a COMSOL Multiphysics server on port 2036 (default)
+## directon to COMSOL executable
+comsol mphserver -port 2036
+
+# directory of file
+/Applications/COMSOL55/Multiphysics/mli/mphstartup.m
+# run file to connect to COMSOL server via MATLAB
+/Applications/COMSOL55/Multiphysics/mli/mphstartup('localhost', 2036)
+      
+
+function mphstart(varargin)
+% MPHSTART Connect MATLAB to a COMSOL server
+%
+%   MPHSTART creates a connection with a COMSOL server using
+%   the default port number (which is 2036).
+%
+%   MPHSTART(PORT) creates a connection with a COMSOL server
+%   using the specified port number PORT.
+%
+%   MPHSTART(IPADDRESS, PORT) creates a connection with a COMSOL
+%   server using the specified IP address IPADDRESS and the port number PORT.
+%
+%   MPHSTART(IPADDRESS, PORT, USERNAME, PASSWORD) creates a connection with
+%   a COMSOL server using the specified IP address IPADDRESS, the port number 
+%   PORT, the username USERNAME and the password PASSWORD.
+%
+%   MPHSTART(IPADDRESS, PORT, COMSOLPATH) creates a connection with a
+%   COMSOL server using the specified IP address and port number using the 
+%   COMSOL path that is specified. This is useful if MPHSTART can not find 
+%   the location of the COMSOL Multiphysics installation.
+%
+%   MPHSTART(IPADDRESS, PORT, COMSOLPATH, USERNAME, PASSWORD) creates a
+%   connection with a COMSOL server using the specified IP address, port 
+%   number, username and password using the COMSOL path that is specified. 
+%   This is useful if MPHSTART can not find the location of the COMSOL 
+%   Multiphysics installation.
+%
+%   A COMSOL server must be started prior to run MPHSTART.
+%
+%   See the entry MPHSTART in the LiveLink for MATLAB User's Guide for more
+%   information.
+%
+%   Example 1:
+%     % Connect manually MATLAB to a COMSOL Multiphysics Server and create
+%     % a model:
+%     mphstart
+%     import com.comsol.model.util.*
+%     model = ModelUtil.create('Model');
+%     % Disable recording of model history
+%     model.hist.disable
+%
+%   Example 2:
+%     % Connect MATLAB to a COMSOL Multiphysics Server running on the
+%     % computer with the IP address 192.168.0.1 using port 2037:
+%     mphstart('192.168.0.1', 2037)
+
+%   Copyright 2010-2019 COMSOL
