@@ -258,15 +258,30 @@ AxesLineWidth = 1;
 LineLineWidth = 1;
 
 dispersionFigure = figure;
+
+% length/height of plot in centimeters
+plotDim = 8;
+
 dispersionFigure.Units = 'centimeters';
-% length/height of plot
-plotDim = 10;
 dispersionFigure.Position = [35, 8, plotDim, plotDim];
+
+dispersionFigure.PaperUnits = 'centimeters';
+dispersionFigure.PaperPositionMode = 'manual';
+dispersionFigure.PaperSize = [plotDim, plotDim];
+dispersionFigure.PaperPosition = [0, 0, plotDim, plotDim];
+dispersionFigure.Renderer = 'painters';
+
+% set(gcf, 'PaperPositionMode', 'manual');
+% set(gcf,'papersize',[width,height])
+% set(gcf,'paperposition',[0,0,width,height])
+% set(gcf, 'renderer', 'painters');
 
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, Font, FontSize, 1);
 
 dispersionAxis = gca;
-dispersionAxis.Position = [.15, .15, .7, .7];
-exportgraphics(dispersionFigure,'testDisp.eps');
-saveas(dispersionFigure, 'testDisp2', 'epsc');
-saveas(dispersionFigure, 'testDispFigure', 'fig');
+    dispersionAxis.Position = [.18, .18, .64, .64];
+% exportgraphics(dispersionFigure,'testDisp.png');
+% exportgraphics(dispersionFigure,'testDisp.eps');
+
+saveas(dispersionFigure, 'testDisp8', 'pdf');
+% saveas(dispersionFigure, 'testDisp11', 'eps');
