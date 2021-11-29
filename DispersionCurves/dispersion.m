@@ -1,40 +1,33 @@
 clearvars
 close all
 
-%% creating mesh
-
-nameMesh = 'testing';
-createMeshUnitcell(nameMesh, .1, .1, .075/2, 0, 1, 20e-3, 1);
-
-% loading mesh
-evalin('caller', [nameMesh, 'ExportMesh']);
-
-%% input parameters
-% number Elements
-numEl = size(msh.QUADS9, 1);
-
-% number Nodes per Element
-nodPEle = size(msh.QUADS9, 2) - 1;
-
-%% material properties
-%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN ----------------------------------- 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Matrix material index for PnC=1!
-% For multiple materials use vector: [E1;E2;...].
-% Youngs Modulus [N/m^2].
-E = [.93e6; 2.1e11; 2.1e11];
+%% creating mesh
+nameMesh = 'testing';
+% cell length
+l1 = .1; 
+% cell height
+l2 = .1;
+
+createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 10e-3, 1);
+
+%% material properties
+% Matrix material index for PnC=1!     !!v!! 
+% For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
+% Youngs Modulus [N/m^2].              !!^!!
+E = [.93e6; 2.1e11];
 
 % Poission ratio [-]
-v = [0.45; 0.3; 0.3];
+v = [0.45; 0.3];
 
 % Density [kg/m^3]
-rho = [1250; 7850; 7850];
+rho = [1250; 7850];
 
 % Thickness [m]
-t = [1; 1; 1];
+t = [1; 1];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -48,6 +41,17 @@ dof = 2;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  ---------------------------------- END ------------------------------------ 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% loading mesh
+evalin('caller', [nameMesh, 'ExportMesh']);
+
+%% input parameters
+% number Elements
+numEl = size(msh.QUADS9, 1);
+
+% number Nodes per Element
+nodPEle = size(msh.QUADS9, 2) - 1;
+
 
 % material matrix
 matProp = [E, v, rho, t];
@@ -68,7 +72,22 @@ quadsCorner = msh.QUADS9(:, 1:4);
 nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
-% scheme of the natural coordinate system (order = 2)
+%% drawing mesh
+meshFigure = figure;
+meshFigure.Units = 'centimeters';
+meshFigure.Position = [20, 8, 10, 10];
+
+drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
+
+meshAxis = gca;
+meshAxis.Position = [.1, .1, .8, .8];
+
+set(meshAxis,'XColor', 'none','YColor','none');
+exportgraphics(meshFigure,'test.eps');
+% set(meshAxis, 'visible', 'off');
+
+%% scheme of the natural coordinate system (order = 2)
+% 
 %                       7
 %  (-1,1)    4----------o---------3 (1,1)
 %            |                    |
@@ -102,11 +121,6 @@ end
 
 %% global stiffness, mass
 [Ksys, Msys] = FastMatrixAssembly(Elements);
-
-%% drawing mesh
-drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
-
-axis equal
 
 %% getting eingenfrequencies
 omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
@@ -149,11 +163,6 @@ PBC0(3, :) = [-0.05, -0.05, 0, 0.05, -0.05, 0];
 % e.g. top->bottom/left->right.
 PBC0(4, :) = [-0.05, 0.05, 0, 0.05, 0.05, 0]; 
 %
-% settings for all plots
-Font = "CMU Serif";
-FontSize = 26;
-AxesLineWidth = 1;
-LineLineWidth = 1;
 
 minNodeDist = 0.0001;
 
@@ -241,6 +250,23 @@ parfor kindx = 1:size(kx0, 1)
     ABand(:, :, kindx) = AEig0PBC; 
 end
 
-% plotting dispersion curves
-figure;
+%% plotting dispersion curves
+% settings for all plots
+Font = "CMU Serif";
+FontSize = 12;
+AxesLineWidth = 1;
+LineLineWidth = 1;
+
+dispersionFigure = figure;
+dispersionFigure.Units = 'centimeters';
+% length/height of plot
+plotDim = 10;
+dispersionFigure.Position = [35, 8, plotDim, plotDim];
+
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, Font, FontSize, 1);
+
+dispersionAxis = gca;
+dispersionAxis.Position = [.15, .15, .7, .7];
+exportgraphics(dispersionFigure,'testDisp.eps');
+saveas(dispersionFigure, 'testDisp2', 'epsc');
+saveas(dispersionFigure, 'testDispFigure', 'fig');
