@@ -1,2 +1,8 @@
 *.asv
 *.mat
+*.eps
+*.fig
+*.pdf
+testing.geo
+testingExportMesh.m
+testingExportMesh.msh
