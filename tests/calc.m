@@ -5,7 +5,7 @@ tic
 
 %% input parameters
 % loading mesh
-beam
+beam_coarse
 
 % number Elements
 numEl = size(msh.QUADS9, 1);
@@ -108,7 +108,7 @@ uy = displacements(2:2:end);
 % wz = zeros(length(vy),1);
 scaleFactor = 5;
 
-% drawing color field
+%% drawing color field
 figure;
 
 drawingField2D(nodesGlob + scaleFactor * [ux uy], connGlob, uy);

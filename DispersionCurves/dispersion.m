@@ -12,7 +12,7 @@ l1 = .1;
 % cell height
 l2 = .1;
 
-createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 10e-3, 1);
+createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 100e-3, 1);
 
 %% material properties
 % Matrix material index for PnC=1!     !!v!! 
@@ -83,7 +83,7 @@ meshAxis = gca;
 meshAxis.Position = [.1, .1, .8, .8];
 
 set(meshAxis,'XColor', 'none','YColor','none');
-exportgraphics(meshFigure,'test.eps');
+% exportgraphics(meshFigure,'test.eps');
 % set(meshAxis, 'visible', 'off');
 
 %% scheme of the natural coordinate system (order = 2)
@@ -149,19 +149,19 @@ deltaKxy0 = 144;
 % [Input line coordinates: x1, y1,z1, x2 ,y2,z2].   
 % Maintain direction for corresponding input/output lines, 
 % e.g. top->bottom/left->right.
-PBC0(1, :) = [-0.05, -0.05, 0, -0.05, 0.05, 0]; 
+PBC0(1, :) = [-l1/2, -l2/2, 0, -l1/2, l2/2, 0]; 
 % [Output line coordinates: x1, y1,z1, x2 ,y2,z2].  
 % Maintain direction for corresponding input/output lines, 
 % e.g. top->bottom/left->right.
-PBC0(2, :) = [0.05, -0.05, 0, 0.05, 0.05, 0]; 
+PBC0(2, :) = [l1/2, -l2/2, 0, l1/2, l2/2, 0]; 
 % [Input line coordinates: xx1, y1,z1, x2 ,y2,z2].   
 % Maintain direction for corresponding input/output lines, 
 % e.g. top->bottom/left->right.
-PBC0(3, :) = [-0.05, -0.05, 0, 0.05, -0.05, 0]; 
+PBC0(3, :) = [-l1/2, -l2/2, 0, l1/2, -l2/2, 0]; 
 % [Output line coordinates: x1, y1,z1, x2 ,y2,z2].  
 % Maintain direction for corresponding input/output lines, 
 % e.g. top->bottom/left->right.
-PBC0(4, :) = [-0.05, 0.05, 0, 0.05, 0.05, 0]; 
+PBC0(4, :) = [-l1/2, l2/2, 0, l1/2, l2/2, 0]; 
 %
 
 minNodeDist = 0.0001;

@@ -9,7 +9,7 @@ Mesh.SubdivisionAlgorithm = 0;
 //
 Mesh.RecombineAll = 1;
 //
-lc = 0.1;
+lc = 1;
 //
 Point(1) = {0, 0, 0, lc};
 Point(4) = {0, 1, 0, lc};
