@@ -1,4 +1,4 @@
-function plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, Font, ...
+function plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, ...
     FontSize, LineLineWidth)
     %PLOTDISPERSION Summary of this function goes here
     %   Detailed explanation goes here
@@ -20,7 +20,7 @@ indBand = find(fBandDelta > 10);
 
 for bgi = 1:size(indBand, 2)
 	Bandgaps = fill([0 max(kxy0) max(kxy0) 0], [fBandMax(indBand(bgi)) fBandMax(indBand(bgi)) fBandMin(indBand(bgi)) fBandMin(indBand(bgi))], LightGrey);
-	text(10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz'], 'FontSize', FontSize-1, 'fontName', Font, 'interpreter', 'latex');
+	text(10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz'], 'FontSize', FontSize-1, 'interpreter', 'latex');
 end
 
 box on

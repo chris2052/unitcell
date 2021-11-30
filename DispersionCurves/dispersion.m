@@ -252,7 +252,7 @@ end
 
 %% plotting dispersion curves
 % settings for all plots
-Font = "CMU Serif";
+% Font = "CMU Serif";
 FontSize = 12;
 AxesLineWidth = 1;
 LineLineWidth = 1;
@@ -260,15 +260,16 @@ LineLineWidth = 1;
 dispersionFigure = figure;
 
 % length/height of plot in centimeters
-plotDim = 8;
+plotDimX = 10;
+plotDimY = 10;
 
 dispersionFigure.Units = 'centimeters';
-dispersionFigure.Position = [35, 8, plotDim, plotDim];
+dispersionFigure.Position = [35, 8, plotDimX, plotDimY];
 
 dispersionFigure.PaperUnits = 'centimeters';
 dispersionFigure.PaperPositionMode = 'manual';
-dispersionFigure.PaperSize = [plotDim, plotDim];
-dispersionFigure.PaperPosition = [0, 0, plotDim, plotDim];
+dispersionFigure.PaperSize = [plotDimX, plotDimY];
+dispersionFigure.PaperPosition = [0, 0, plotDimX, plotDimY];
 dispersionFigure.Renderer = 'painters';
 
 % set(gcf, 'PaperPositionMode', 'manual');
@@ -276,12 +277,12 @@ dispersionFigure.Renderer = 'painters';
 % set(gcf,'paperposition',[0,0,width,height])
 % set(gcf, 'renderer', 'painters');
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, Font, FontSize, 1);
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1);
 
 dispersionAxis = gca;
-    dispersionAxis.Position = [.18, .18, .64, .64];
+dispersionAxis.Position = [.15, .15, .7, .7];
 % exportgraphics(dispersionFigure,'testDisp.png');
 % exportgraphics(dispersionFigure,'testDisp.eps');
 
-saveas(dispersionFigure, 'testDisp8', 'pdf');
+saveas(dispersionFigure, 'testDisp', 'pdf');
 % saveas(dispersionFigure, 'testDisp11', 'eps');
