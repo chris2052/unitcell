@@ -2,20 +2,20 @@ clearvars
 close all
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  -------------------------------- BEGIN ----------------------------------- 
+%  -------------------------------- BEGIN -----------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% creating mesh
 nameMesh = 'testing';
 % cell length
-l1 = .1; 
+l1 = .1;
 % cell height
 l2 = .1;
 
 createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 100e-3, 1);
 
 %% material properties
-% Matrix material index for PnC=1!     !!v!! 
+% Matrix material index for PnC=1!     !!v!!
 % For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
 % Youngs Modulus [N/m^2].              !!^!!
 E = [.93e6; 2.1e11];
@@ -39,7 +39,7 @@ order = 2;
 dof = 2;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  ---------------------------------- END ------------------------------------ 
+%  ---------------------------------- END ------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % loading mesh
@@ -51,7 +51,6 @@ numEl = size(msh.QUADS9, 1);
 
 % number Nodes per Element
 nodPEle = size(msh.QUADS9, 2) - 1;
-
 
 % material matrix
 matProp = [E, v, rho, t];
@@ -82,12 +81,12 @@ drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 meshAxis = gca;
 meshAxis.Position = [.1, .1, .8, .8];
 
-set(meshAxis,'XColor', 'none','YColor','none');
+set(meshAxis, 'XColor', 'none', 'YColor', 'none');
 % exportgraphics(meshFigure,'test.eps');
 % set(meshAxis, 'visible', 'off');
 
 %% scheme of the natural coordinate system (order = 2)
-% 
+%
 %                       7
 %  (-1,1)    4----------o---------3 (1,1)
 %            |                    |
@@ -146,22 +145,22 @@ deltaKxy0 = 144;
 
 % Festlegung der Bloch-Floquet-Randbedingungen:
 %
-% [Input line coordinates: x1, y1,z1, x2 ,y2,z2].   
-% Maintain direction for corresponding input/output lines, 
+% [Input line coordinates: x1, y1,z1, x2 ,y2,z2].
+% Maintain direction for corresponding input/output lines,
 % e.g. top->bottom/left->right.
-PBC0(1, :) = [-l1/2, -l2/2, 0, -l1/2, l2/2, 0]; 
-% [Output line coordinates: x1, y1,z1, x2 ,y2,z2].  
-% Maintain direction for corresponding input/output lines, 
+PBC0(1, :) = [-l1 / 2, -l2 / 2, 0, -l1 / 2, l2 / 2, 0];
+% [Output line coordinates: x1, y1,z1, x2 ,y2,z2].
+% Maintain direction for corresponding input/output lines,
 % e.g. top->bottom/left->right.
-PBC0(2, :) = [l1/2, -l2/2, 0, l1/2, l2/2, 0]; 
-% [Input line coordinates: xx1, y1,z1, x2 ,y2,z2].   
-% Maintain direction for corresponding input/output lines, 
+PBC0(2, :) = [l1 / 2, -l2 / 2, 0, l1 / 2, l2 / 2, 0];
+% [Input line coordinates: xx1, y1,z1, x2 ,y2,z2].
+% Maintain direction for corresponding input/output lines,
 % e.g. top->bottom/left->right.
-PBC0(3, :) = [-l1/2, -l2/2, 0, l1/2, -l2/2, 0]; 
-% [Output line coordinates: x1, y1,z1, x2 ,y2,z2].  
-% Maintain direction for corresponding input/output lines, 
+PBC0(3, :) = [-l1 / 2, -l2 / 2, 0, l1 / 2, -l2 / 2, 0];
+% [Output line coordinates: x1, y1,z1, x2 ,y2,z2].
+% Maintain direction for corresponding input/output lines,
 % e.g. top->bottom/left->right.
-PBC0(4, :) = [-l1/2, l2/2, 0, l1/2, l2/2, 0]; 
+PBC0(4, :) = [-l1 / 2, l2 / 2, 0, l1 / 2, l2 / 2, 0];
 %
 
 minNodeDist = 0.0001;
@@ -199,28 +198,28 @@ deltaKxy = pi / (deltaKxy0 * sqrt(normdky^2 + normdkx^2));
 kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
     (pi - deltaKxy:-deltaKxy:0)'];
 ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
-    (pi - deltaKxy:-deltaKxy:0)'];
+        (pi - deltaKxy:-deltaKxy:0)'];
 
-% GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in 
+% GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in
 % x-Richtung vorliegt
-if size(BasisVec, 1) == 1     
+if size(BasisVec, 1) == 1
     kx0(deltaKxy0 + 2:end) = [];
     ky0(deltaKxy0 + 2:end) = [];
 end
 
 % Nummerierungsvektor von 1 bis Anzahl der Eintraege im kx bzw ky Vektor
-kxy0 = 1:1:size(kx0); 
-% Anzahl an Freiheitsgraden im reduzierten System 
+kxy0 = 1:1:size(kx0);
+% Anzahl an Freiheitsgraden im reduzierten System
 % (also abzgl. v8, v5, v9, v6, v7)
-nDofPBC = size(Ksys, 1) - size(unique(IdxPBCOut), 1); 
-% Preallokation einer Matrix, in die die Eigenfrequenzen pro Berechnungsschritt 
+nDofPBC = size(Ksys, 1) - size(unique(IdxPBCOut), 1);
+% Preallokation einer Matrix, in die die Eigenfrequenzen pro Berechnungsschritt
 % geschrieben werden
-fBand = zeros(nBand, size(kx0, 1)); 
-% Preallokation einer Matrix, in die die Eigenformen pro Berechnungsschritt 
+fBand = zeros(nBand, size(kx0, 1));
+% Preallokation einer Matrix, in die die Eigenformen pro Berechnungsschritt
 % geschrieben werden
-ABand = zeros(nDofPBC, nBand, size(kx0, 1)); 
+ABand = zeros(nDofPBC, nBand, size(kx0, 1));
 % Schleife zur Berechnung der Dispersionskurven
-parfor kindx = 1:size(kx0, 1) 
+parfor kindx = 1:size(kx0, 1)
     %     kindx = 1;
     i = sqrt(-1);
     % Auslesen von kx
@@ -233,21 +232,21 @@ parfor kindx = 1:size(kx0, 1)
     lambY = exp(sqrt(-1) * ky);
     % Einbau der Randbedingungen mittels Funktion
     [KPBC, MPBC, ~] = ApplyBlochBC2D(Ksys, Msys, IdxPBCIn, IdxPBCOut, lambX, ...
-        lambY, PBCTrans); 
+    lambY, PBCTrans);
     % Loesen des Eigenwertproblems
-    [AEig0PBC, LambdaPBC] = eigs(KPBC, MPBC, nBand, 'smallestabs');     
+    [AEig0PBC, LambdaPBC] = eigs(KPBC, MPBC, nBand, 'smallestabs');
     % Sortieren der Loesungen
-    [LambdaPBC, LambdaPBCLoc] = sort(diag(LambdaPBC)); 
+    [LambdaPBC, LambdaPBCLoc] = sort(diag(LambdaPBC));
     % Berechnung von omega (mit neuer Sortierung)
-    OmegaiPBC = sqrt((LambdaPBC)'); 
+    OmegaiPBC = sqrt((LambdaPBC)');
     % Berechnung von f
-    fiPBC = OmegaiPBC / (2 * pi()); 
+    fiPBC = OmegaiPBC / (2 * pi());
     % Umsortierung der Eigenformen
-    AEig0PBC = AEig0PBC(:, LambdaPBCLoc); 
+    AEig0PBC = AEig0PBC(:, LambdaPBCLoc);
     % Abspeichern der Eigenfrequenzen
-    fBand(:, kindx) = fiPBC'; 
+    fBand(:, kindx) = fiPBC';
     % Abspeichern der Eigenformen
-    ABand(:, :, kindx) = AEig0PBC; 
+    ABand(:, :, kindx) = AEig0PBC;
 end
 
 %% plotting dispersion curves
@@ -277,7 +276,7 @@ dispersionFigure.Renderer = 'painters';
 % set(gcf,'paperposition',[0,0,width,height])
 % set(gcf, 'renderer', 'painters');
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1);
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1, 0);
 
 dispersionAxis = gca;
 dispersionAxis.Position = [.15, .15, .7, .7];
@@ -286,3 +285,61 @@ dispersionAxis.Position = [.15, .15, .7, .7];
 
 saveas(dispersionFigure, 'testDisp', 'pdf');
 % saveas(dispersionFigure, 'testDisp11', 'eps');
+
+%% Plotting eigenmodes for specified wave vector
+%%%%%%%%%%%%%%% predefined:
+nPBCEig = nBand;
+InitialNodes = nodesGlob;
+maxU0 = 1;
+di = dof;
+InitialElements = connGlob;
+Font = 'CMU Serif';
+%%%%%%%%%%%%%%%
+% KPlotPBCEF ist ein vorgegebener Wellenvektor, fuer den die Eigenform geplottet
+% werden soll, beispielswiese [0; 0] waere die Stelle Gamma im Dispersionsdiagramm 
+% und [pi; 0] die Stelle
+KPlotPBCEF = [0; 0];
+kxEF = KPlotPBCEF(1); 
+kyEF = KPlotPBCEF(2);
+% Index von KPlotPBCEF in der Matrix der Wellenvektoren bestimmen
+[~, indxKEF] = ismember(KPlotPBCEF', [kx0 ky0], 'rows'); 
+
+i = sqrt(-1);
+% Lambda_x und Lamda_y fuer die vorgegebenen Wellenvektoren bestimmen
+lambX = exp(sqrt(-1) * kxEF); 
+lambY = exp(sqrt(-1) * kyEF);
+% Transformationsmatrix LambdaR berechnen
+[~, ~, LambdaR] = ApplyBlochBC2D(Ksys, Msys, IdxPBCIn, IdxPBCOut, lambX, ...
+    lambY, PBCTrans); 
+% nPBCEig ist die Anzahl der zu plottenden Eigenformen
+if nPBCEig > 0 
+    % Achsenlimits
+    axLimitsS2 = [
+        1.2 * unique(min(InitialNodes(:, 1))), ...
+        1.2 * unique(max(InitialNodes(:, 1))), ...
+        1.2 * unique(min(InitialNodes(:, 2))), ...
+        1.2 * unique(max(InitialNodes(:, 2)))]; 
+    % Schleife zum Plotten aller Eigenformen
+    for i = 1:nPBCEig
+
+        figure
+        % ABand sind die Eigenformen aus deiner Berechnung, hier werden dann die 
+        % Randbedingungen wieder eingebaut
+        APBCEF = real(LambdaR * ABand(:, i, indxKEF)); 
+        % Die zugehoerige Frequenz wird ausgelesen
+        PBCfiPlot = fBand(i, indxKEF); 
+        % Normierung der Eigenformen auf eine vorgegebene maximale Amplitude maxU0
+        PlotFakS2 = maxU0 / unique(max(max(abs(APBCEF)))); 
+        % Umsortierung der Eigenformen nach Anteil in x - und y - Richtung, 
+        % also [u1 v1; u2 v2; …]
+        AEigS2Plot = PlotFakS2 * [APBCEF(1:di:end) APBCEF(2:di:end) * (di - 1)]; 
+        % Resultierende Verschiebung
+        totalDispEigS2 = (AEigS2Plot(:, 1).^2 + (di - 1) ...
+            * AEigS2Plot(:, 2).^2).^(0.5); 
+
+        Plot2DPBCEigenmodes(InitialNodes(:, 1:2), InitialElements(:, 1:nodPEle), ...
+            PlotElements(:, 1:end - 1), QuadMeshNodes, 1, zeros(size(AEigS2Plot)), ...
+            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, Font, FontSize, axLimitsS2, ...
+            colMap, PMshStudy);
+    end
+end
