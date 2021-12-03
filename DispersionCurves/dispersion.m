@@ -12,7 +12,7 @@ l1 = .1;
 % cell height
 l2 = .1;
 
-createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 100e-3, 1);
+createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 10e-3, 1);
 
 %% material properties
 % Matrix material index for PnC=1!     !!v!!
@@ -288,18 +288,22 @@ saveas(dispersionFigure, 'testDisp', 'pdf');
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = nBand;
+nPBCEig = 4; %nBand;
 InitialNodes = nodesGlob;
-maxU0 = 1;
+PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
+QuadMeshNodes = connGlob(:, 1:4);
+maxU0 = 0.01;
 di = dof;
 InitialElements = connGlob;
 Font = 'CMU Serif';
+colMap = 'jet';
+PMshStudy = 0;
 %%%%%%%%%%%%%%%
 % KPlotPBCEF ist ein vorgegebener Wellenvektor, fuer den die Eigenform geplottet
 % werden soll, beispielswiese [0; 0] waere die Stelle Gamma im Dispersionsdiagramm 
-% und [pi; 0] die Stelle
-KPlotPBCEF = [0; 0];
-kxEF = KPlotPBCEF(1); 
+% und [pi; 0] die Stelle X, [pi; pi] M
+KPlotPBCEF = [pi; 0];
+kxEF = KPlotPBCEF(1);
 kyEF = KPlotPBCEF(2);
 % Index von KPlotPBCEF in der Matrix der Wellenvektoren bestimmen
 [~, indxKEF] = ismember(KPlotPBCEF', [kx0 ky0], 'rows'); 
@@ -338,7 +342,7 @@ if nPBCEig > 0
             * AEigS2Plot(:, 2).^2).^(0.5); 
 
         Plot2DPBCEigenmodes(InitialNodes(:, 1:2), InitialElements(:, 1:nodPEle), ...
-            PlotElements(:, 1:end - 1), QuadMeshNodes, 1, zeros(size(AEigS2Plot)), ...
+            PlotElements(:, 1:end), QuadMeshNodes, 1, zeros(size(AEigS2Plot)), ...
             totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, Font, FontSize, axLimitsS2, ...
             colMap, PMshStudy);
     end
