@@ -3,6 +3,7 @@
 *.eps
 *.fig
 *.pdf
+*.png
 testing.geo
 testingExportMesh.m
 testingExportMesh.msh
