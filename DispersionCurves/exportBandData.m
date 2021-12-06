@@ -1,4 +1,4 @@
-function exportData(FileName, xValues, yValues)
+function exportBandData(FileName, xValues, yValues)
 %EXPORTDATA Summary of this function goes here
 %   Detailed explanation goes here
 
