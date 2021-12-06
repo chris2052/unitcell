@@ -11,8 +11,15 @@ nameMesh = 'testing';
 l1 = .1;
 % cell height
 l2 = .1;
+% radius out and in 
+rOut = .075/2;
+rIn = 0;
+% mesh settings
+lc = 1;
+maxMesh = 10e-3;
+factorMesh = 1;
 
-createMeshUnitcell(nameMesh, l1, l2, .075/2, 0, 1, 10e-3, 1);
+createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 
 %% material properties
 % Matrix material index for PnC=1!     !!v!!
@@ -45,7 +52,7 @@ dof = 2;
 % loading mesh
 evalin('caller', [nameMesh, 'ExportMesh']);
 
-%% input parameters
+%% getting parameters
 % number Elements
 numEl = size(msh.QUADS9, 1);
 
@@ -80,8 +87,10 @@ drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
 meshAxis = gca;
 meshAxis.Position = [.1, .1, .8, .8];
+meshAxis.XColor = 'none';
+meshAxis.YColor = 'none';
 
-set(meshAxis, 'XColor', 'none', 'YColor', 'none');
+% set(meshAxis, 'XColor', 'none', 'YColor', 'none'); old style
 % exportgraphics(meshFigure,'test.eps');
 % set(meshAxis, 'visible', 'off');
 
@@ -288,11 +297,11 @@ saveas(dispersionFigure, 'testDisp', 'pdf');
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 4; %nBand;
+nPBCEig = 6; %nBand;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
-maxU0 = 0.01;
+maxU0 = 1e-3;
 di = dof;
 InitialElements = connGlob;
 Font = 'CMU Serif';
