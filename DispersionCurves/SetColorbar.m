@@ -10,7 +10,7 @@ cpos = get(cbar,'position');
 % brighten(0.5); 
      
 % Title of the colorbar
-set(get(cbar,'title'),'string','$|\textbf{u}|$ [m]','interpreter','latex');
+set(get(cbar,'title'),'string','$|\textbf{u}|$ [m]','interpreter','latex', 'fontsize', 12);
 %locate = get(cbar,'title');
 %tpos = get(locate,'position');
 %tpos(3) = tpos(3)+5. ;
@@ -20,11 +20,11 @@ set(get(cbar,'title'),'string','$|\textbf{u}|$ [m]','interpreter','latex');
 % get the color limits
 clim = caxis;
 ylim(cbar,[clim(1) clim(2)]);
-numpts = 3 ;    % Number of points to be displayed on colorbar
+numpts = 5 ;    % Number of points to be displayed on colorbar
 kssv = linspace(clim(1),clim(2),numpts);
 set(cbar,'YtickMode','manual','YTick',kssv); % Set the tickmode to manual
 for i = 1:numpts
     imep = num2str(kssv(i),'%+3.2E');
     vasu(i) = {imep} ;
 end
-set(cbar,'YTickLabel',vasu(1:numpts),'fontsize',20);
+set(cbar,'YTickLabel',vasu(1:numpts),'fontsize',12);
