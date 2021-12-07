@@ -37,3 +37,10 @@ box(gca,'on');
 grid(gca,'on');
 % Set the remaining axes properties
 set(gca,'FontSize',12,'TickLabelInterpreter','latex');
+
+%%
+for n = 1:6
+    x(n,:) = [dataObjs(n).XData(1,:), dataObjs(n).XData(2,end)];
+    y(n,:) = [dataObjs(n).YData(1,:), dataObjs(n).YData(2,end)];
+end
+x = x(1,:);
