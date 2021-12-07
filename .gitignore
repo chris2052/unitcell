@@ -4,6 +4,8 @@
 *.fig
 *.pdf
 *.png
+*.txt
+plotDispersionAlex.m
 testing.geo
 testingExportMesh.m
 testingExportMesh.msh
