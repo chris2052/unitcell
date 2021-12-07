@@ -292,12 +292,12 @@ dispersionAxis.Position = [.15, .15, .7, .7];
 % exportgraphics(dispersionFigure,'testDisp.png');
 % exportgraphics(dispersionFigure,'testDisp.eps');
 
-saveas(dispersionFigure, 'testDisp', 'pdf');
+% saveas(dispersionFigure, 'testDisp', 'pdf');
 % saveas(dispersionFigure, 'testDisp11', 'eps');
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 6; %nBand;
+nPBCEig = 1; %nBand;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
