@@ -39,8 +39,18 @@ grid(gca,'on');
 set(gca,'FontSize',12,'TickLabelInterpreter','latex');
 
 %%
+dispFig = gcf;
+axObjs = dispFig.Children;
+dataObjs = axObjs.Children;
+
 for n = 1:6
     x(n,:) = [dataObjs(n).XData(1,:), dataObjs(n).XData(2,end)];
     y(n,:) = [dataObjs(n).YData(1,:), dataObjs(n).YData(2,end)];
 end
+
 x = x(1,:);
+y = flipud(y);
+
+%%
+% figure
+plotDispersionAlex(y, x, 12, 1.2);
