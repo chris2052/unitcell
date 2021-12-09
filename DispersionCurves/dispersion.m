@@ -1,4 +1,10 @@
-clearvars
+length = 0.002:0.002:.0998;
+% r = radius/2;
+bandCounter = 1;
+bandgaps = zeros(size(length, 2), 50);
+
+for l = 1:size(length, 2)
+clearvars -except 'radius' 'bandCounter' 'bandgaps' 'l'
 close all
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -6,18 +12,18 @@ close all
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% creating mesh
-nameMesh = 'testing';
-% cell length
-l1 = .1;
-% cell height
-l2 = .1;
-% radius out and in 
-rOut = .075/2;
+nameMesh = 'corse';
+% cell length [m]
+l1 = length(l);
+% cell height [m]
+l2 = length(l);
+% radius out and in [m]
+rOut = l * .3;%.075/2;
 rIn = 0;
 % mesh settings
 lc = 1;
-maxMesh = 10e-3;
-factorMesh = 1;
+maxMesh = 50e-3;
+factorMesh = 10;
 
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 
@@ -131,9 +137,9 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% getting eingenfrequencies
-omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
-f = real(sqrt(omega2) / (2 * pi));
-disp(f);
+% omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+% f = real(sqrt(omega2) / (2 * pi));
+% disp(f);
 
 %% Dispersion Curves
 %
@@ -147,7 +153,7 @@ disp(f);
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 6;
+nBand = 10;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 144;
@@ -229,8 +235,6 @@ fBand = zeros(nBand, size(kx0, 1));
 ABand = zeros(nDofPBC, nBand, size(kx0, 1));
 % Schleife zur Berechnung der Dispersionskurven
 parfor kindx = 1:size(kx0, 1)
-    %     kindx = 1;
-    i = sqrt(-1);
     % Auslesen von kx
     kx = kx0(kindx) + 0.01;
     % Auslesen von ky
@@ -289,6 +293,12 @@ plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1, 0);
 
 dispersionAxis = gca;
 dispersionAxis.Position = [.15, .15, .7, .7];
+
+dispersionName = ['dispers', '_L', num2str(L * 10000), 'mm'];
+
+savefig(dispersionFigure, [dispersionName, '.fig'], 'compact')
+
+bandgaps(bandCounter, :) = getBandgaps(fBand);
 % exportgraphics(dispersionFigure,'testDisp.png');
 % exportgraphics(dispersionFigure,'testDisp.eps');
 
@@ -297,7 +307,7 @@ dispersionAxis.Position = [.15, .15, .7, .7];
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1; %nBand;
+nPBCEig = 0; %nBand;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -355,4 +365,8 @@ if nPBCEig > 0
             totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, Font, FontSize, axLimitsS2, ...
             colMap, PMshStudy);
     end
+end
+
+bandCounter = bandCounter + 1;
+
 end

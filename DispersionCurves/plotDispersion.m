@@ -25,7 +25,7 @@ if ~gnuplot
     
     for bgi = 1:size(indBand, 2)
 	    Bandgaps = fill([0 max(kxy0) max(kxy0) 0], [fBandMax(indBand(bgi)) fBandMax(indBand(bgi)) fBandMin(indBand(bgi)) fBandMin(indBand(bgi))], LightGrey);
-	    text(10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz'], 'FontSize', FontSize-1, 'interpreter', 'latex');
+	    text(10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz'], 'FontSize', FontSize, 'interpreter', 'latex');
     end
     
     box on
