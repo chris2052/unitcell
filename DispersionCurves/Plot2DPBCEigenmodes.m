@@ -62,13 +62,13 @@ hold on
 %     set(gca,'Layer','top')
 %     title([num2str(numEig),'. Eigenmode, f=',num2str(f,'%.2f'),' [Hz] '])
     if K(1)==0 && K(2)==0
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $\Gamma$'] ,'interpreter','latex', 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $\Gamma$'] , 'FontSize', FontSize);
     end
     if K(1)==pi() && K(2)==0
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $X$'] ,'interpreter','latex', 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $X$'] , 'interpreter', 'latex', 'FontSize', FontSize);
     end
     if K(1)==pi() && K(2)==pi()
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $M$'] ,'interpreter','latex', 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $M$'] , 'interpreter', 'latex', 'FontSize', FontSize);
     end
     figureHandle4 = gcf;
     set(findall(figureHandle4,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
