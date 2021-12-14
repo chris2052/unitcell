@@ -1,46 +1,53 @@
-length = 0.002:0.002:.0998;
-% r = radius/2;
-bandCounter = 1;
-bandgaps = zeros(size(length, 2), 50);
-
-for l = 1:size(length, 2)
-clearvars -except 'radius' 'bandCounter' 'bandgaps' 'l'
+% length = 0.001:0.001:0.049;
+% bandCounter = 1;
+% bandgaps = zeros(size(length, 2), 50);
+% 
+% for l = 1:size(length, 2)
+clearvars %-except 'length' 'bandCounter' 'bandgaps' 'l'
 close all
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN -----------------------------------
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% creating mesh
 nameMesh = 'corse';
 % cell length [m]
-l1 = length(l);
+l1 = 0.10;
 % cell height [m]
-l2 = length(l);
+l2 = 0.10;
 % radius out and in [m]
-rOut = l * .3;%.075/2;
-rIn = 0;
+rOut = 0.0375;
+rIn = 0.025;
 % mesh settings
 lc = 1;
-maxMesh = 50e-3;
-factorMesh = 10;
+% maxMesh = 50e-3;
+% factorMesh = 10;
+maxMesh = 10e-3;
+factorMesh = 1;
 
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 
 %% material properties
 % Matrix material index for PnC=1!     !!v!!
 % For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
-% Youngs Modulus [N/m^2].              !!^!!
-E = [.93e6; 2.1e11];
+%                                      !!^!!
+% PlexiGlas -- Rubber -- Steel
+matName = ["plexiglas"; "rubber"; "steel"];
+
+% Youngs Modulus [N/m^2].
+% E = [5e9; 20e6; 4.11e11];
+E = [3.5e9; 0.93e6; 2.1e11];
 
 % Poission ratio [-]
-v = [0.45; 0.3];
+% v = [0.35; 0.499; 0.28];
+v = [0.25; 0.45; 0.3];
 
 % Density [kg/m^3]
-rho = [1250; 7850];
+% rho = [1190; 1200; 19300];
+rho = [1100; 1250; 7850];
 
 % Thickness [m]
-t = [1; 1];
+t = [1; 1; 1];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -51,9 +58,8 @@ order = 2;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 
+%  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  ---------------------------------- END ------------------------------------
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % loading mesh
 evalin('caller', [nameMesh, 'ExportMesh']);
@@ -153,7 +159,7 @@ end
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 10;
+nBand = 6;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 144;
@@ -294,11 +300,12 @@ plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1, 0);
 dispersionAxis = gca;
 dispersionAxis.Position = [.15, .15, .7, .7];
 
-dispersionName = ['dispers', '_L', num2str(L * 10000), 'mm'];
+% dispersionName = ['dispers', '_L', num2str(L * 10000), 'mm'];
+% 
+% savefig(dispersionFigure, [dispersionName, '.fig'], 'compact')
 
-savefig(dispersionFigure, [dispersionName, '.fig'], 'compact')
+% bandgaps(bandCounter, :) = getBandgaps(fBand);
 
-bandgaps(bandCounter, :) = getBandgaps(fBand);
 % exportgraphics(dispersionFigure,'testDisp.png');
 % exportgraphics(dispersionFigure,'testDisp.eps');
 
@@ -307,7 +314,7 @@ bandgaps(bandCounter, :) = getBandgaps(fBand);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 0; %nBand;
+nPBCEig = 1; %nBand;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -367,6 +374,14 @@ if nPBCEig > 0
     end
 end
 
-bandCounter = bandCounter + 1;
-
+%% generate log-file with mat properties
+log = fopen('log.txt', 'w');
+fprintf(log, 'Unitcell dimensions:\n\n%5.3f x %5.3f [m]\n\n', l1, l2);
+fprintf(log, 'rOut = %5.3f [m]\n', rOut);
+fprintf(log, 'rIn = %5.3f [m]\n\n\n', rIn);
+fprintf(log, '%5s %12s %12s %9s %12s %9s \n\n','Num', 'Mat', 'E [N/m2]', ...
+    'v [-]', 'rho [kg/m3]', 't [m]');
+for k = 1:size(matProp, 1)
+    fprintf(log, '%5d %12s %12.3e %9.3f %12.f %9.1f\n', k, matName(k), matProp(k,:));
 end
+fclose(log);
