@@ -5,6 +5,8 @@
 *.pdf
 *.png
 *.txt
+*.pdf_tex
+*.svg
 plotDispersionAlex.m
 testing.geo
 testingExportMesh.m
