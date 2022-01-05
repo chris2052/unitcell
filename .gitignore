@@ -9,5 +9,7 @@
 *.svg
 plotDispersionAlex.m
 testing.geo
-testingExportMesh.m
-testingExportMesh.msh
+*ExportMesh.m
+*ExportMesh.msh
+*MESH.m
+*MESH.msh
