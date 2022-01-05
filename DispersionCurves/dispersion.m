@@ -159,7 +159,7 @@ end
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 6;
+nBand = 10;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 144;
@@ -295,7 +295,7 @@ dispersionFigure.Renderer = 'painters';
 % set(gcf,'paperposition',[0,0,width,height])
 % set(gcf, 'renderer', 'painters');
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1, 0);
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1);
 
 dispersionAxis = gca;
 dispersionAxis.Position = [.15, .15, .7, .7];
@@ -314,7 +314,7 @@ dispersionAxis.Position = [.15, .15, .7, .7];
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1; %nBand;
+nPBCEig = 1;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
