@@ -62,7 +62,7 @@ dof = 2;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % loading mesh
-evalin('caller', [nameMesh, 'ExportMesh']);
+evalin('caller', [nameMesh, 'MESH']);
 
 %% getting parameters
 % number Elements
