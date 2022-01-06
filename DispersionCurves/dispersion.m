@@ -196,8 +196,7 @@ minNodeDist = 0.0001;
 % PBCTrans gibt die Translation fuer jeden Knoten auf der linken Seite auf
 % die rechte Seite (bzw von unten nach oben) an.
 % BasisVec ist der Basisvektor (Translationsvektor) fuer die jeweilige
-% Randbedingung, also
-% in x-Richtung waere der Vektor [hx 0 0].
+% Randbedingung, also in x-Richtung waere der Vektor [hx 0 0].
 
 maxBasisVecX = max(max(abs(BasisVec(:, 1))));
 maxBasisVecY = max(max(abs(BasisVec(:, 2))));
@@ -314,7 +313,7 @@ dispersionAxis.Position = [.15, .15, .7, .7];
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1;
+nPBCEig = 12;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -342,7 +341,7 @@ lambY = exp(sqrt(-1) * kyEF);
 [~, ~, LambdaR] = ApplyBlochBC2D(Ksys, Msys, IdxPBCIn, IdxPBCOut, lambX, ...
     lambY, PBCTrans); 
 % nPBCEig ist die Anzahl der zu plottenden Eigenformen
-if nPBCEig > 0 
+if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
     % Achsenlimits
     axLimitsS2 = [
         1.2 * unique(min(InitialNodes(:, 1))), ...
