@@ -1,8 +1,3 @@
-% length = 0.001:0.001:0.049;
-% bandCounter = 1;
-% bandgaps = zeros(size(length, 2), 50);
-% 
-% for l = 1:size(length, 2)
 clearvars %-except 'length' 'bandCounter' 'bandgaps' 'l'
 close all
 
@@ -16,13 +11,13 @@ l1 = 0.10;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.0375;
-rIn = 0.025;
+rOut = 0.005;
+rIn = 0;
 % mesh settings
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 10e-3;
+maxMesh = 40e-3;
 factorMesh = 1;
 
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
@@ -31,23 +26,17 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 % Matrix material index for PnC=1!     !!v!!
 % For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
 %                                      !!^!!
-% PlexiGlas -- Rubber -- Steel
-matName = ["plexiglas"; "rubber"; "steel"];
-
-% Youngs Modulus [N/m^2].
-% E = [5e9; 20e6; 4.11e11];
-E = [3.5e9; 0.93e6; 2.1e11];
-
-% Poission ratio [-]
-% v = [0.35; 0.499; 0.28];
-v = [0.25; 0.45; 0.3];
-
-% Density [kg/m^3]
-% rho = [1190; 1200; 19300];
-rho = [1100; 1250; 7850];
-
-% Thickness [m]
-t = [1; 1; 1];
+% 1 silicon
+% 2 steel
+% 3 rubber
+% 4 plexiglas
+% 5 wolfram
+% 6 concrete
+%
+% loading materials
+load("material.mat");
+% mat: outer material -> inner material
+mat = [1, 2];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -71,8 +60,9 @@ numEl = size(msh.QUADS9, 1);
 % number Nodes per Element
 nodPEle = size(msh.QUADS9, 2) - 1;
 
-% material matrix
-matProp = [E, v, rho, t];
+% material matrix E[N/m^2], v[-], rho[kg/m3], t[m]
+matProp = material(mat,:);
+matName = materialNames(mat);
 matIdx = msh.QUADS9(:, end);
 
 %% getting mesh informations
@@ -91,20 +81,7 @@ nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
 %% drawing mesh
-meshFigure = figure;
-meshFigure.Units = 'centimeters';
-meshFigure.Position = [20, 8, 10, 10];
-
 drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
-
-meshAxis = gca;
-meshAxis.Position = [.1, .1, .8, .8];
-meshAxis.XColor = 'none';
-meshAxis.YColor = 'none';
-
-% set(meshAxis, 'XColor', 'none', 'YColor', 'none'); old style
-% exportgraphics(meshFigure,'test.eps');
-% set(meshAxis, 'visible', 'off');
 
 %% scheme of the natural coordinate system (order = 2)
 %
@@ -151,7 +128,7 @@ end
 %
 % Minimalbeispiel zur Berechnung der Dispersionskurven
 % Zusaetzliche Eingabedaten
-% Das Beispiel funktioniert nicht als standalone, sondern die Ssteifigkeits-
+% Das Beispiel funktioniert nicht als standalone, sondern die Steifigkeits-
 % und Massenmatrix, sowie die Knotenmatrix muessen bereits berechnet worden sein.
 % Dabei werden hier folgende Namen verwenden:
 % Ksys - Steifigkeitsmatrix
@@ -159,7 +136,7 @@ end
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 10;
+nBand = 6;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 144;
