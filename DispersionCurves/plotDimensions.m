@@ -3,7 +3,7 @@ function plotDimensions(fighandle, axhandle, xDim, yDim, factor, angle)
 %   Detailed explanation goes here
 
 fighandle.Units = 'centimeters';
-fighandle.Position = [35, 8, xDim, yDim];
+fighandle.Position = [25, 8, xDim, yDim];
 
 fighandle.PaperUnits = 'centimeters';
 fighandle.PaperPositionMode = 'manual';

@@ -11,7 +11,7 @@ l1 = 0.10;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.005;
+rOut = 0.04;
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -36,7 +36,7 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [1, 2];
+mat = [3, 5];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -245,52 +245,13 @@ parfor kindx = 1:size(kx0, 1)
 end
 
 %% plotting dispersion curves
-% settings for all plots
-% Font = "CMU Serif";
-FontSize = 12;
-AxesLineWidth = 1;
-LineLineWidth = 1;
 
-dispersionFigure = figure;
-
-% length/height of plot in centimeters
-plotDimX = 10;
-plotDimY = 10;
-
-dispersionFigure.Units = 'centimeters';
-dispersionFigure.Position = [35, 8, plotDimX, plotDimY];
-
-dispersionFigure.PaperUnits = 'centimeters';
-dispersionFigure.PaperPositionMode = 'manual';
-dispersionFigure.PaperSize = [plotDimX, plotDimY];
-dispersionFigure.PaperPosition = [0, 0, plotDimX, plotDimY];
-dispersionFigure.Renderer = 'painters';
-
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf,'papersize',[width,height])
-% set(gcf,'paperposition',[0,0,width,height])
-% set(gcf, 'renderer', 'painters');
-
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1);
-
-dispersionAxis = gca;
-dispersionAxis.Position = [.15, .15, .7, .7];
-
-% dispersionName = ['dispers', '_L', num2str(L * 10000), 'mm'];
-% 
-% savefig(dispersionFigure, [dispersionName, '.fig'], 'compact')
-
-% bandgaps(bandCounter, :) = getBandgaps(fBand);
-
-% exportgraphics(dispersionFigure,'testDisp.png');
-% exportgraphics(dispersionFigure,'testDisp.eps');
-
-% saveas(dispersionFigure, 'testDisp', 'pdf');
-% saveas(dispersionFigure, 'testDisp11', 'eps');
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDimensions(gcf, gca, 10, 10, .7);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 12;
+nPBCEig = 0;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
