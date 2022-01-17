@@ -251,7 +251,7 @@ plotDimensions(gcf, gca, 10, 10, .7);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 0;
+nPBCEig = 3;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -281,11 +281,11 @@ lambY = exp(sqrt(-1) * kyEF);
 % nPBCEig ist die Anzahl der zu plottenden Eigenformen
 if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
     % Achsenlimits
-    axLimitsS2 = [
-        1.2 * unique(min(InitialNodes(:, 1))), ...
-        1.2 * unique(max(InitialNodes(:, 1))), ...
-        1.2 * unique(min(InitialNodes(:, 2))), ...
-        1.2 * unique(max(InitialNodes(:, 2)))]; 
+    axLimitsS2 = 1.0 * [
+        unique(min(InitialNodes(:, 1))), ...
+        unique(max(InitialNodes(:, 1))), ...
+        unique(min(InitialNodes(:, 2))), ...
+        unique(max(InitialNodes(:, 2)))]; 
     % Schleife zum Plotten aller Eigenformen
     for i = 1:nPBCEig
 
@@ -305,10 +305,12 @@ if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
             * AEigS2Plot(:, 2).^2).^(0.5); 
 
         Plot2DPBCEigenmodes(InitialNodes(:, 1:2), InitialElements(:, 1:nodPEle), ...
-            PlotElements(:, 1:end), QuadMeshNodes, 1, zeros(size(AEigS2Plot)), ...
-            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, Font, FontSize, axLimitsS2, ...
+            PlotElements(:, 1:end), QuadMeshNodes, zeros(size(AEigS2Plot)), ...
+            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, axLimitsS2, ...
             colMap, PMshStudy);
     end
+    SetColorbar
+    axis off
 end
 
 %% generate log-file with mat properties

@@ -18,7 +18,8 @@ fBandMax = fBandMax(1:end - 1);
 fBandDelta = fBandMin - fBandMax;
 indBand = find(fBandDelta > 10);
 
-% creating handle (figure-handle is not needed)
+% creating handles
+FreqBandsFig = figure;
 FreqBandsAx = axes;
 
 % plotting frequency bands

@@ -1,5 +1,5 @@
 function Plot2DPBCEigenmodes(coordinates,nodesInitial,nodesPlot,QuadMeshNodes, ...
-    factor,depl,component, numEig,f,K,Font,FontSize,axLimits,colMap,PMshStudy) 
+    depl,component, numEig,f,K,axLimits,colMap,PMshStudy) 
 %--------------------------------------------------------------------------
 % Purpose:
 %         To plot the profile of a component on deformed mesh
@@ -45,8 +45,8 @@ profile = zeros(nnel,nel) ;
     defoX = X+UX ; %UX*factor
     defoY = Y+UY ;  
 %     figure
-%     set(gcf, 'Position',  [0, 0, 1920, 1080])
-    set(gcf, 'Position',  [0, 0, 2560, 1080])
+    set(gcf, 'Position',  [0, 0, 1920, 1080])
+%     set(gcf, 'Position',  [0, 0, 2560, 1080])
 hold on
     fill(defoX,defoY,profile,'LineStyle','none')
     if PMshStudy==1
@@ -62,17 +62,16 @@ hold on
 %     set(gca,'Layer','top')
 %     title([num2str(numEig),'. Eigenmode, f=',num2str(f,'%.2f'),' [Hz] '])
     if K(1)==0 && K(2)==0
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $\Gamma$'] , 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], Punkt $\Gamma$']);
     end
     if K(1)==pi() && K(2)==0
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $X$'] , 'interpreter', 'latex', 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], Punkt X']);
     end
     if K(1)==pi() && K(2)==pi()
-    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], point $M$'] , 'interpreter', 'latex', 'FontSize', FontSize);
+    title([num2str(numEig,'%.0f') '. Eigenmode, $f$ = ' num2str(abs(f),'%.1f') ' [Hz], Punkt M']);
     end
-    figureHandle4 = gcf;
-    set(findall(figureHandle4,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
-    set(findall(figureHandle4,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
+%     figureHandle4 = gcf;
+%     set(findall(figureHandle4,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
+%     set(findall(figureHandle4,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
     % Colorbar Setting
-    SetColorbar
 end
