@@ -11,6 +11,7 @@ function drawingMesh2D(nodesCornerX, nodesCornerY, FaceColor, ...
     meshAxis.Position = [0, 0, 1, 1];
     meshAxis.XColor = 'none';
     meshAxis.YColor = 'none';
+    axis(meshAxis, 'square')
     
     for k = 1:size(nodesCornerX, 1)
         patch(meshAxis, nodesCornerX(k, :), nodesCornerY(k, :), 'w', 'FaceColor', ...
