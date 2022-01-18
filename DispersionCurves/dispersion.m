@@ -1,6 +1,9 @@
-clearvars %-except 'length' 'bandCounter' 'bandgaps' 'l'
-close all
+radius = 0.005:0.001:0.045;
+bandgaps = zeros(size(radius,2), 50);
+log = fopen(['log', '.txt'], 'w');
 
+for counter = 1:size(radius,2)
+clearvars -except radius bandgaps counter log
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN -----------------------------------
 %
@@ -11,7 +14,7 @@ l1 = 0.10;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.04;
+rOut = radius(counter);
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -36,7 +39,7 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [3, 5];
+mat = [1, 6];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -65,6 +68,9 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = msh.QUADS9(:, end);
 
+%% generate log-file with mat properties
+createLog(log, counter, l1, l2, rIn, rOut, matProp, matName);
+
 %% getting mesh informations
 % global degree of freedom
 gDof = dof * msh.nbNod;
@@ -81,7 +87,7 @@ nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
 %% drawing mesh
-drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
+% drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
 %% scheme of the natural coordinate system (order = 2)
 %
@@ -244,14 +250,18 @@ parfor kindx = 1:size(kx0, 1)
     ABand(:, :, kindx) = AEig0PBC;
 end
 
+currentBand = getBandgaps(fBand); 
+bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
+
+end
 %% plotting dispersion curves
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
-plotDimensions(gcf, gca, 10, 10, .7);
+% plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+% plotDimensions(gcf, gca, 10, 10, .7);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 3;
+nPBCEig = 1;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -308,19 +318,12 @@ if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
             PlotElements(:, 1:end), QuadMeshNodes, zeros(size(AEigS2Plot)), ...
             totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, axLimitsS2, ...
             colMap, PMshStudy);
+            SetColorbar
+        axis off
+        plotDimensions(gcf, gca, 11, 6, .8)
+  
     end
-    SetColorbar
-    axis off
+
 end
 
-%% generate log-file with mat properties
-log = fopen('log.txt', 'w');
-fprintf(log, 'Unitcell dimensions:\n\n%5.3f x %5.3f [m]\n\n', l1, l2);
-fprintf(log, 'rOut = %5.3f [m]\n', rOut);
-fprintf(log, 'rIn = %5.3f [m]\n\n\n', rIn);
-fprintf(log, '%5s %12s %12s %9s %12s %9s \n\n','Num', 'Mat', 'E [N/m2]', ...
-    'v [-]', 'rho [kg/m3]', 't [m]');
-for k = 1:size(matProp, 1)
-    fprintf(log, '%5d %12s %12.3e %9.3f %12.f %9.1f\n', k, matName(k), matProp(k,:));
-end
 fclose(log);
