@@ -1,22 +1,23 @@
-clearvars
+clearvars %-except 'length' 'bandCounter' 'bandgaps' 'l'
 close all
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN -----------------------------------
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% creating mesh
-nameMesh = 'testing';
-% cell length
-l1 = .1;
-% cell height
-l2 = .1;
-% radius out and in 
-rOut = .075/2;
+nameMesh = 'corse';
+% cell length [m]
+l1 = 0.10;
+% cell height [m]
+l2 = 0.10;
+% radius out and in [m]
+rOut = 0.04;
 rIn = 0;
 % mesh settings
 lc = 1;
-maxMesh = 10e-3;
+% maxMesh = 50e-3;
+% factorMesh = 10;
+maxMesh = 40e-3;
 factorMesh = 1;
 
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
@@ -24,17 +25,18 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 %% material properties
 % Matrix material index for PnC=1!     !!v!!
 % For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
-% Youngs Modulus [N/m^2].              !!^!!
-E = [.93e6; 2.1e11];
-
-% Poission ratio [-]
-v = [0.45; 0.3];
-
-% Density [kg/m^3]
-rho = [1250; 7850];
-
-% Thickness [m]
-t = [1; 1];
+%                                      !!^!!
+% 1 silicon
+% 2 steel
+% 3 rubber
+% 4 plexiglas
+% 5 wolfram
+% 6 concrete
+%
+% loading materials
+load("material.mat");
+% mat: outer material -> inner material
+mat = [3, 5];
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -45,12 +47,11 @@ order = 2;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 
+%  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  ---------------------------------- END ------------------------------------
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % loading mesh
-evalin('caller', [nameMesh, 'ExportMesh']);
+evalin('caller', [nameMesh, 'MESH']);
 
 %% getting parameters
 % number Elements
@@ -59,8 +60,9 @@ numEl = size(msh.QUADS9, 1);
 % number Nodes per Element
 nodPEle = size(msh.QUADS9, 2) - 1;
 
-% material matrix
-matProp = [E, v, rho, t];
+% material matrix E[N/m^2], v[-], rho[kg/m3], t[m]
+matProp = material(mat,:);
+matName = materialNames(mat);
 matIdx = msh.QUADS9(:, end);
 
 %% getting mesh informations
@@ -79,20 +81,7 @@ nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
 %% drawing mesh
-meshFigure = figure;
-meshFigure.Units = 'centimeters';
-meshFigure.Position = [20, 8, 10, 10];
-
 drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
-
-meshAxis = gca;
-meshAxis.Position = [.1, .1, .8, .8];
-meshAxis.XColor = 'none';
-meshAxis.YColor = 'none';
-
-% set(meshAxis, 'XColor', 'none', 'YColor', 'none'); old style
-% exportgraphics(meshFigure,'test.eps');
-% set(meshAxis, 'visible', 'off');
 
 %% scheme of the natural coordinate system (order = 2)
 %
@@ -131,15 +120,15 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% getting eingenfrequencies
-omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
-f = real(sqrt(omega2) / (2 * pi));
-disp(f);
+% omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+% f = real(sqrt(omega2) / (2 * pi));
+% disp(f);
 
 %% Dispersion Curves
 %
 % Minimalbeispiel zur Berechnung der Dispersionskurven
 % Zusaetzliche Eingabedaten
-% Das Beispiel funktioniert nicht als standalone, sondern die Ssteifigkeits-
+% Das Beispiel funktioniert nicht als standalone, sondern die Steifigkeits-
 % und Massenmatrix, sowie die Knotenmatrix muessen bereits berechnet worden sein.
 % Dabei werden hier folgende Namen verwenden:
 % Ksys - Steifigkeitsmatrix
@@ -184,8 +173,7 @@ minNodeDist = 0.0001;
 % PBCTrans gibt die Translation fuer jeden Knoten auf der linken Seite auf
 % die rechte Seite (bzw von unten nach oben) an.
 % BasisVec ist der Basisvektor (Translationsvektor) fuer die jeweilige
-% Randbedingung, also
-% in x-Richtung waere der Vektor [hx 0 0].
+% Randbedingung, also in x-Richtung waere der Vektor [hx 0 0].
 
 maxBasisVecX = max(max(abs(BasisVec(:, 1))));
 maxBasisVecY = max(max(abs(BasisVec(:, 2))));
@@ -229,8 +217,6 @@ fBand = zeros(nBand, size(kx0, 1));
 ABand = zeros(nDofPBC, nBand, size(kx0, 1));
 % Schleife zur Berechnung der Dispersionskurven
 parfor kindx = 1:size(kx0, 1)
-    %     kindx = 1;
-    i = sqrt(-1);
     % Auslesen von kx
     kx = kx0(kindx) + 0.01;
     % Auslesen von ky
@@ -259,45 +245,13 @@ parfor kindx = 1:size(kx0, 1)
 end
 
 %% plotting dispersion curves
-% settings for all plots
-% Font = "CMU Serif";
-FontSize = 12;
-AxesLineWidth = 1;
-LineLineWidth = 1;
 
-dispersionFigure = figure;
-
-% length/height of plot in centimeters
-plotDimX = 10;
-plotDimY = 10;
-
-dispersionFigure.Units = 'centimeters';
-dispersionFigure.Position = [35, 8, plotDimX, plotDimY];
-
-dispersionFigure.PaperUnits = 'centimeters';
-dispersionFigure.PaperPositionMode = 'manual';
-dispersionFigure.PaperSize = [plotDimX, plotDimY];
-dispersionFigure.PaperPosition = [0, 0, plotDimX, plotDimY];
-dispersionFigure.Renderer = 'painters';
-
-% set(gcf, 'PaperPositionMode', 'manual');
-% set(gcf,'papersize',[width,height])
-% set(gcf,'paperposition',[0,0,width,height])
-% set(gcf, 'renderer', 'painters');
-
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec, FontSize, 1, 0);
-
-dispersionAxis = gca;
-dispersionAxis.Position = [.15, .15, .7, .7];
-% exportgraphics(dispersionFigure,'testDisp.png');
-% exportgraphics(dispersionFigure,'testDisp.eps');
-
-% saveas(dispersionFigure, 'testDisp', 'pdf');
-% saveas(dispersionFigure, 'testDisp11', 'eps');
+% plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+% plotDimensions(gcf, gca, 10, 10, .7);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1; %nBand;
+nPBCEig = 0;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -325,13 +279,13 @@ lambY = exp(sqrt(-1) * kyEF);
 [~, ~, LambdaR] = ApplyBlochBC2D(Ksys, Msys, IdxPBCIn, IdxPBCOut, lambX, ...
     lambY, PBCTrans); 
 % nPBCEig ist die Anzahl der zu plottenden Eigenformen
-if nPBCEig > 0 
+if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
     % Achsenlimits
-    axLimitsS2 = [
-        1.2 * unique(min(InitialNodes(:, 1))), ...
-        1.2 * unique(max(InitialNodes(:, 1))), ...
-        1.2 * unique(min(InitialNodes(:, 2))), ...
-        1.2 * unique(max(InitialNodes(:, 2)))]; 
+    axLimitsS2 = 1.0 * [
+        unique(min(InitialNodes(:, 1))), ...
+        unique(max(InitialNodes(:, 1))), ...
+        unique(min(InitialNodes(:, 2))), ...
+        unique(max(InitialNodes(:, 2)))]; 
     % Schleife zum Plotten aller Eigenformen
     for i = 1:nPBCEig
 
@@ -351,8 +305,25 @@ if nPBCEig > 0
             * AEigS2Plot(:, 2).^2).^(0.5); 
 
         Plot2DPBCEigenmodes(InitialNodes(:, 1:2), InitialElements(:, 1:nodPEle), ...
-            PlotElements(:, 1:end), QuadMeshNodes, 1, zeros(size(AEigS2Plot)), ...
-            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, Font, FontSize, axLimitsS2, ...
+            PlotElements(:, 1:end), QuadMeshNodes, zeros(size(AEigS2Plot)), ...
+            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, axLimitsS2, ...
             colMap, PMshStudy);
+            SetColorbar
+        axis off
+        plotDimensions(gcf, gca, 11, 6, .8)
+  
     end
+
 end
+
+%% generate log-file with mat properties
+log = fopen('log.txt', 'w');
+fprintf(log, 'Unitcell dimensions:\n\n%5.3f x %5.3f [m]\n\n', l1, l2);
+fprintf(log, 'rOut = %5.3f [m]\n', rOut);
+fprintf(log, 'rIn = %5.3f [m]\n\n\n', rIn);
+fprintf(log, '%5s %12s %12s %9s %12s %9s \n\n','Num', 'Mat', 'E [N/m2]', ...
+    'v [-]', 'rho [kg/m3]', 't [m]');
+for k = 1:size(matProp, 1)
+    fprintf(log, '%5d %12s %12.3e %9.3f %12.f %9.1f\n', k, matName(k), matProp(k,:));
+end
+fclose(log);
