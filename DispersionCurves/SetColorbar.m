@@ -1,10 +1,9 @@
 function SetColorbar
 
-    cbar = colorbar('southoutside');
+    cbar = colorbar('eastoutside');
 
     % Title of the colorbar
-%     cbar.Label.String = '$|\textbf{u}|$ [m]';
-    set(get(cbar,'label'),'string','$|\bm{u}|$ [m]','interpreter','none');
+    set(get(cbar,'title'),'string','$|\bm{u}|$ [m]','interpreter','none');
 
     % get the color limits
     clim = caxis;
