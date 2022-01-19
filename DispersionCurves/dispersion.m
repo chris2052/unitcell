@@ -1,9 +1,16 @@
-radius = 0.005:0.001:0.045;
-bandgaps = zeros(size(radius,2), 50);
-log = fopen(['log', '.txt'], 'w');
+modifier = 1000:500:15000;
+bandgaps = zeros(size(modifier,2), 50);
+log = fopen(['logRho', '.txt'], 'w');
 
-for counter = 1:size(radius,2)
-clearvars -except radius bandgaps counter log
+for counter = 1:size(modifier,2)
+clearvars -except modifier bandgaps counter log
+close all
+
+% diplay progress
+fprintf('%d of %d\n', counter, size(modifier,2))
+
+% color
+grey = [.7, .7, .7];
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN -----------------------------------
 %
@@ -14,7 +21,7 @@ l1 = 0.10;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = radius(counter);
+rOut = 0.03;
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -39,7 +46,8 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [1, 6];
+mat = [1, 2];
+material(mat(2),3) = (modifier(counter));
 
 % (plane) "strain", "stress"
 physics = "strain";
