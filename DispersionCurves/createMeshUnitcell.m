@@ -105,7 +105,8 @@ function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, factorMesh
 
     fclose(fileid);
 
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'MESH.m'])
-    system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'MESH.msh'])
+    % skip output (dont print out)
+    [~, ~] = system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'MESH.m']);
+    [~, ~] = system(['gmsh ', filename, '.geo', ' -2 -o ', filename, 'MESH.msh']);
 
 end
