@@ -14,3 +14,6 @@ testing.geo
 *ExportMesh.m
 *MESH.m
 DispersionCurves/data/
+Cell2Vec.m
+Cell2Vec.c
+uTest_Cell2Vec.m
