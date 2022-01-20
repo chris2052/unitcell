@@ -1,6 +1,7 @@
 function bandgaps = getBandgaps(fBand)
-%GETBANDGAPS Summary of this function goes here
-%   Detailed explanation goes here
+%GETBANDGAPS get row vector of the bandgaps in fBand
+%   bandgaps[1begin, 1end, 2begin, 2end, 3begin, 3end, ...]
+
 fBand = abs(fBand);
 fBandMin = min(abs(fBand'));
 fBandMax = max(abs(fBand'));
@@ -10,7 +11,6 @@ fBandDelta = fBandMin - fBandMax;
 indBand = find(fBandDelta > 10);
 
 bandgaps = zeros(1, size(indBand, 2) * 2);
-% bandgaps = zeros(1, 50);
 
 for bgi = 1:size(indBand, 2)
     bandMin = fBandMax(indBand(bgi));
