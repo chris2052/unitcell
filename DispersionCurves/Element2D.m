@@ -40,7 +40,7 @@ N = zeros(2, 2*(order + 1)^2);
 
 for n = 1:(order + 1)^2
     [detJ, invJT] = JacobianQuad(IntNodes(n,1), IntNodes(n,2), cornerNodes);
-    [shape, diff] = shapeQ4(IntNodes(n,1), IntNodes(n,2), 'q9');
+    [shape, diff] = shapeQuad(IntNodes(n,1), IntNodes(n,2), 'q9');
     B0 = invJT * diff';
     B(1, 1:2:2*(order + 1)^2 - 1) = B0(1,:);
     B(2, 2:2:2*(order + 1)^2) = B0(2,:);
@@ -53,3 +53,82 @@ for n = 1:(order + 1)^2
 end
 
 end
+
+function [detJ, invJT] = JacobianQuad(xi, eta, nodes)
+    %JACOBIANQUAD Summary of this function goes here
+    %   Only the 4 corner nodes are needed for the Jacobian (change of
+    %   area)
+    % coordinate scheme:
+    % 4--------3
+    % |        |
+    % |		   |
+    % |        |
+    % 1--------2
+
+    xx = nodes(:, 1);
+    yy = nodes(:, 2);
+
+    x1 = xx(1);
+    x2 = xx(2);
+    x3 = xx(3);
+    x4 = xx(4);
+
+    y1 = yy(1);
+    y2 = yy(2);
+    y3 = yy(3);
+    y4 = yy(4);
+
+    detJ = 1/8*((x1*y2) - (x2*y1) - (x1*y4) + (x2*y3) - (x3*y2) + (x4*y1) ...
+        + (x3*y4) - (x4*y3) - (eta*x1*y2) + (eta*x2*y1) + (eta*x1*y3) ...
+        - (eta*x3*y1) - (eta*x2*y4) + (eta*x4*y2) + (eta*x3*y4) - (eta*x4*y3) ...
+        - (x1*xi*y3) + (x3*xi*y1) + (x1*xi*y4) + (x2*xi*y3) - (x3*xi*y2) ... 
+        - (x4*xi*y1) - (x2*xi*y4) + (x4*xi*y2));
+
+    invJT = transpose([-(2*(y1 + y2 - y3 - y4 - xi*y1 + xi*y2 - xi*y3 + xi*y4))/(x1*y2 - x2*y1 - x1*y4 + x2*y3 - x3*y2 + x4*y1 + x3*y4 - x4*y3 - eta*x1*y2 + eta*x2*y1 + eta*x1*y3 - eta*x3*y1 - eta*x2*y4 + eta*x4*y2 + eta*x3*y4 - eta*x4*y3 - x1*xi*y3 + x3*xi*y1 + x1*xi*y4 + x2*xi*y3 - x3*xi*y2 - x4*xi*y1 - x2*xi*y4 + x4*xi*y2), (2*(x1 + x2 - x3 - x4 - x1*xi + x2*xi - x3*xi + x4*xi))/(x1*y2 - x2*y1 - x1*y4 + x2*y3 - x3*y2 + x4*y1 + x3*y4 - x4*y3 - eta*x1*y2 + eta*x2*y1 + eta*x1*y3 - eta*x3*y1 - eta*x2*y4 + eta*x4*y2 + eta*x3*y4 - eta*x4*y3 - x1*xi*y3 + x3*xi*y1 + x1*xi*y4 + x2*xi*y3 - x3*xi*y2 - x4*xi*y1 - x2*xi*y4 + x4*xi*y2);
+            (2*(y1 - y2 - y3 + y4 - eta*y1 + eta*y2 - eta*y3 + eta*y4))/(x1*y2 - x2*y1 - x1*y4 + x2*y3 - x3*y2 + x4*y1 + x3*y4 - x4*y3 - eta*x1*y2 + eta*x2*y1 + eta*x1*y3 - eta*x3*y1 - eta*x2*y4 + eta*x4*y2 + eta*x3*y4 - eta*x4*y3 - x1*xi*y3 + x3*xi*y1 + x1*xi*y4 + x2*xi*y3 - x3*xi*y2 - x4*xi*y1 - x2*xi*y4 + x4*xi*y2), -(2*(x1 - x2 - x3 + x4 - eta*x1 + eta*x2 - eta*x3 + eta*x4))/(x1*y2 - x2*y1 - x1*y4 + x2*y3 - x3*y2 + x4*y1 + x3*y4 - x4*y3 - eta*x1*y2 + eta*x2*y1 + eta*x1*y3 - eta*x3*y1 - eta*x2*y4 + eta*x4*y2 + eta*x3*y4 - eta*x4*y3 - x1*xi*y3 + x3*xi*y1 + x1*xi*y4 + x2*xi*y3 - x3*xi*y2 - x4*xi*y1 - x2*xi*y4 + x4*xi*y2)]);
+
+end
+
+function [shape,diffs] = shapeQuad(xi, eta, elemType)
+%SHAPEQ4 Summary of this function goes here
+%   Detailed explanation goes here
+switch elemType
+    case 'q9'
+        shape = 1/4*[
+            xi*eta*(xi-1)*(eta-1);
+            xi*eta*(xi+1)*(eta-1);
+            xi*eta*(xi+1)*(eta+1);
+            xi*eta*(xi-1)*(eta+1);
+            -2*eta*(xi*xi-1)*(eta-1);
+            -2*xi*(xi+1)*(eta*eta-1);
+            -2*eta*(xi*xi-1)*(eta+1);
+            -2*xi*(xi-1)*(eta*eta-1);
+            4*(xi*xi-1)*(eta*eta-1)];
+        diffs = [
+            (eta*(2*xi - 1)*(eta - 1))/4, (xi*(2*eta - 1)*(xi - 1))/4;
+            (eta*(2*xi + 1)*(eta - 1))/4, (xi*(2*eta - 1)*(xi + 1))/4; 
+            (eta*(2*xi + 1)*(eta + 1))/4, (xi*(2*eta + 1)*(xi + 1))/4; 
+            (eta*(2*xi - 1)*(eta + 1))/4, (xi*(2*eta + 1)*(xi - 1))/4; 
+            -eta*xi*(eta - 1), -((2*eta - 1)*(xi^2 - 1))/2; 
+            -((eta^2 - 1)*(2*xi + 1))/2, -eta*xi*(xi + 1); 
+            -eta*xi*(eta + 1), -((2*eta + 1)*(xi^2 - 1))/2; 
+            -((eta^2 - 1)*(2*xi - 1))/2, -eta*xi*(xi - 1); 
+            2*xi*(eta^2 - 1), 2*eta*(xi^2 - 1)];
+end
+end
+% shapeQ4 = 1/4*[
+%     (1 - xi)*(1 - eta);
+%     (1 + xi)*(1 - eta);
+%     (1 + xi)*(1 + eta);
+%     (1 - xi)*(1 + eta);
+%     ];
+% 
+% shapeQ8 = 1/4*[-(1-xi)*(1-eta)*(1+xi+eta);
+%     -(1+xi)*(1-eta)*(1-xi+eta);
+%     -(1+xi)*(1+eta)*(1-xi-eta);
+%     -(1-xi)*(1+eta)*(1+xi-eta);
+%     2*(1-xi*xi)*(1-eta);
+%     2*(1+xi)*(1-eta*eta);
+%     2*(1-xi*xi)*(1+eta);
+%     2*(1-xi)*(1-eta*eta)];
+% 
