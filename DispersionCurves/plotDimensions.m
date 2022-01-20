@@ -1,6 +1,7 @@
-function plotDimensions(figHandle, axHandle, xDim, yDim, factor, angle)
-%PLOTDIMENSIONS Summary of this function goes here
-%   Detailed explanation goes here
+function plotDimensions(axHandle, figHandle, xDim, yDim, factor, angle)
+%PLOTDIMENSIONS set dimensions of current figure-window xDim x yDim
+%   factor <= 1:    fill factor of axis
+%   angle:          angle of x-ticks (leave empty if not needed)
 
 figHandle.Units = 'centimeters';
 figHandle.Position = [25, 8, xDim, yDim];
@@ -21,5 +22,24 @@ if nargin < 6
 end
 
 xtickangle(axHandle, angle);
+
+plotFigSize(axHandle, figHandle)
+
+end
+
+
+
+function plotFigSize(axHandle, figHandle)
+%PLOTFIGSIZE displays the real dimensions of the axis in [cm]
+
+inPos = axHandle.InnerPosition;
+dx = inPos(3);
+dy = inPos(4);
+
+figHandle.Units = 'centimeters';
+WinSize = figHandle.PaperSize;
+figSize = [WinSize(1)*dx, WinSize(2)*dy];
+
+fprintf('figure size: %3.1f x %3.1f [cm]\n', figSize(1), figSize(2))
 
 end
