@@ -1,4 +1,4 @@
-function plotStretch(axHandle, stretchX, stretchY)
+function plotStretch(axHandle, figHandle, stretchX, stretchY)
 %PLOTSTRETCH Summary of this function goes here
 %   Detailed explanation goes here
 
