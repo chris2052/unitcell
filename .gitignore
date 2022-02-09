@@ -1,3 +1,4 @@
+/tests/*
 *.asv
 *.eps
 *.fig
