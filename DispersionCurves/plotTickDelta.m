@@ -14,7 +14,7 @@ end
 
 newLabel = cell(size(label));
 
-for n = 1:delta:size(label, 1)
+for n = delta:delta:size(label, 1)
 
     newLabel(n) = label(n);
 
