@@ -2,33 +2,37 @@ function plotBandgaps(bandgaps, label, color, xtick)
 %BAND Summary of this function goes here
 %   Detailed explanation goes here
 
+fig = figure;
+ax = axes(fig);
+
 for n = 2:2:size(bandgaps, 2)
     col = bandgaps(:, (n-1):n);
-    if max(col) > 0 || ~isnan(max(col))
+    if max(col) > 0 %|| ~isnan(max(col))
         pos = find(col(:,1));
         flipPos = flipud(pos);
         xVal = [pos; flipPos];
         bgVal = [col(pos,1); col(flipPos,2)];
-        fill(xVal, bgVal, color)
-        hold on
+        fill(ax, xVal, bgVal, color);
+        hold(ax, 'on')
     end
 end
 
-hold off
+hold(ax, 'off')
 
-grid 'on'
+grid(ax, 'on')
 
-axis([0, inf, 0, inf]);
-
-xlabel(label);
-xticks(1:size(bandgaps,1))
+axis(ax, [0, inf, 0, inf])
+xlabel(ax, label);
+xticks(ax, 1:size(bandgaps,1));
 
 if ~iscell(xtick)
-    set(gca, 'XTickLabel', cellstr(get(gca, 'XTickLabel')))
+    set(ax, 'XTickLabel', cellstr(get(gca, 'XTickLabel')))
 end
 
-xticklabels(xtick)
-ylabel('Frequenz $f$ [Hz]')
+xticklabels(ax, compose('%.1f', xtick));
+ylabel(ax, 'Frequenz $f$ [\unit{Hz}]');
+
+ChangeInterpreter(fig, 'none')
 
 end
 
