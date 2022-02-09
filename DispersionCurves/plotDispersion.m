@@ -20,7 +20,7 @@ indBand = find(fBandDelta > 10);
 
 % creating handles
 FreqBandsFig = figure;
-FreqBandsAx = axes;
+FreqBandsAx = axes(FreqBandsFig);
 
 % plotting frequency bands
 plot(FreqBandsAx, kxy0, fBand, 'k');
@@ -35,16 +35,15 @@ for bgi = 1:size(indBand, 2)
         fBandMin(indBand(bgi))], LightGrey);
     text(FreqBandsAx, 10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, ...
         [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ... 
-        ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz'], ...
-        'interpreter', 'none');
+        ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz']);
 end
 
 box on
 set(gca, 'Layer', 'top')
 pbaspect([1 1 1]);
 
-xlabel(FreqBandsAx, 'Wellenvektor')
-ylabel(FreqBandsAx, '$f$ [Hz]')
+xlabel(FreqBandsAx, 'Wellenvektor $\bm{k}$')
+ylabel(FreqBandsAx, 'Frequenz $f$ [\unit{Hz}]')
 
 if size(BasisVec, 1) == 1
     axis(FreqBandsAx, [0 max(kxy0) 0 1.0 * max(max(abs(fBand)))]);
@@ -54,9 +53,10 @@ else
     axis(FreqBandsAx, [0 max(kxy0) 0 1.0 * max(max(abs(fBand)))]);
     xticks(FreqBandsAx, [0, Xptick, Mptick, max(kxy0)])
     xticklabels(FreqBandsAx, {'$\Gamma$', 'X', 'M', '$\Gamma$'})
-    FreqBandsAx.TickLabelInterpreter  = 'none';
 end
 
 hold off
+
+ChangeInterpreter(FreqBandsFig, 'none')
 
 end
