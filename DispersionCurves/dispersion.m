@@ -1,13 +1,15 @@
-modifier = 1000:500:15000;
-bandgaps = zeros(size(modifier,2), 50);
-log = fopen(['logRho', '.txt'], 'w');
 
-for counter = 1:size(modifier,2)
-clearvars -except modifier bandgaps counter log
+% modifier = .1:.1:3;
+% bandgaps = zeros(size(modifier,2), 50);
+% log = fopen(['logScale1-2', '.txt'], 'w');
+% 
+% for counter = 1:size(modifier,2)
+% clearvars -except modifier bandgaps counter log
+
 close all
 
 % diplay progress
-fprintf('%d of %d\n', counter, size(modifier,2))
+% fprintf('%d of %d\n', counter, size(modifier,2))
 
 % color
 grey = [.7, .7, .7];
@@ -17,11 +19,11 @@ grey = [.7, .7, .7];
 %% creating mesh
 nameMesh = 'corse';
 % cell length [m]
-l1 = 0.10;
+l1 = 0.10;%*modifier(counter);
 % cell height [m]
-l2 = 0.10;
+l2 = 0.10;%*modifier(counter);
 % radius out and in [m]
-rOut = 0.03;
+rOut = 0.03;%*modifier(counter);
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -45,18 +47,23 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 %
 % loading materials
 load("material.mat");
+
 % mat: outer material -> inner material
 mat = [1, 2];
-material(mat(2),3) = (modifier(counter));
+
+% material(mat(2),3) = (modifier(counter));
 
 % (plane) "strain", "stress"
 physics = "strain";
 
-% order for gauss quadrature
+% order of polynominals (shape functions)
 order = 2;
 
 % degree of freedom per node; (x, y)-direction
 dof = 2;
+
+% Element Type (number of nodes per element)
+elemType = 'q9';
 
 %  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,12 +79,19 @@ numEl = size(msh.QUADS9, 1);
 nodPEle = size(msh.QUADS9, 2) - 1;
 
 % material matrix E[N/m^2], v[-], rho[kg/m3], t[m]
+matPropComsol = [
+    2e9, 0.45, 1e3, 1;
+    200e9, 0.34, 8e3, 1;
+    ];
+
 matProp = material(mat,:);
+
+
 matName = materialNames(mat);
 matIdx = msh.QUADS9(:, end);
 
 %% generate log-file with mat properties
-createLog(log, counter, l1, l2, rIn, rOut, matProp, matName);
+% createLog(log, counter, l1, l2, rIn, rOut, matProp, matName);
 
 %% getting mesh informations
 % global degree of freedom
@@ -95,7 +109,7 @@ nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
 %% drawing mesh
-% drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
+drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
 %% scheme of the natural coordinate system (order = 2)
 %
@@ -123,7 +137,7 @@ parfor n = 1:numEl
     % gettings material properties per element
     matEle = matProp(matIdx(n), :);
     % generating locale stiffness/mass matrix
-    [elementK, elementM] = Element2D(nodesEle, order, matEle, physics);
+    [elementK, elementM] = Element2D(nodesEle, order, matEle, elemType, physics);
     Elements{n}.K = elementK;
     Elements{n}.M = elementM;
     Elements{n}.DOFs = reshape(repmat(connEle, dof, 1) * dof ...
@@ -258,18 +272,22 @@ parfor kindx = 1:size(kx0, 1)
     ABand(:, :, kindx) = AEig0PBC;
 end
 
-currentBand = getBandgaps(fBand); 
-bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
+%-------------------comment out if not needed----------------------------
+% currentBand = getBandgaps(fBand); 
+% bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
 
-end
+%end
+
+% fclose(log);
+%------------------------------------------------------------------------
 %% plotting dispersion curves
 
-% plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
-% plotDimensions(gcf, gca, 10, 10, .7);
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDimensions(gca, gcf, 10, 10, .7);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1;
+nPBCEig = 6;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -328,10 +346,8 @@ if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
             colMap, PMshStudy);
             SetColorbar
         axis off
-        plotDimensions(gcf, gca, 11, 6, .8)
+        plotDimensions(gca, gcf, 8, 5, .8)
   
     end
 
 end
-
-fclose(log);
