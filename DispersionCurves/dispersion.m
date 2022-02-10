@@ -283,6 +283,8 @@ end
 %% plotting dispersion curves
 
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+
+% dimensions for 3 figs (dispersion curves) in a row
 plotDimensions(gca, gcf, 5.3, 5, .67);
 
 %% Plotting eigenmodes for specified wave vector
