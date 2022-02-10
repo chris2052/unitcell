@@ -4,7 +4,7 @@
 % log = fopen(['logScale1-2', '.txt'], 'w');
 % 
 % for counter = 1:size(modifier,2)
-% clearvars -except modifier bandgaps counter log
+clearvars %-except modifier bandgaps counter log
 
 close all
 
@@ -23,7 +23,7 @@ l1 = 0.10;%*modifier(counter);
 % cell height [m]
 l2 = 0.10;%*modifier(counter);
 % radius out and in [m]
-rOut = 0.03;%*modifier(counter);
+rOut = 0.02;%*modifier(counter);
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -283,11 +283,11 @@ end
 %% plotting dispersion curves
 
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
-plotDimensions(gca, gcf, 10, 10, .7);
+plotDimensions(gca, gcf, 5.3, 5, .67);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 6;
+nPBCEig = 0;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
