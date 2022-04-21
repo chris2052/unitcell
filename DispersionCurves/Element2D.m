@@ -6,6 +6,7 @@ function [k, m] = Element2D(nodes, order, matProp, elemType, physics)
 % 8	  9   6
 % |       |
 % 1---5---2
+%
 
 cornerNodes = nodes(1:4,:);
 
@@ -38,7 +39,7 @@ m = zeros(2*(order + 1)^2);
 B = zeros(3, 2*(order + 1)^2);
 N = zeros(2, 2*(order + 1)^2);
 
-for n = 1:(order + 1)^2 % polynominal order 2 -> 9 shape functions (but does not HAVE to!)
+for n = 1:(order + 1)^2
     [detJ, invJT] = JacobianQuad(IntNodes(n,1), IntNodes(n,2), cornerNodes);
     [shape, diff] = shapeQuad(IntNodes(n,1), IntNodes(n,2), elemType);
     B0 = invJT * diff';
@@ -57,6 +58,7 @@ end
 function [intNodes, weights] = gaussQuadrature(order)
 %GAUSSQUADRATURE Summary of this function goes here
 %   `order` is order of polynominal function
+%
 
 switch order
     case 1

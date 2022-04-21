@@ -1,29 +1,17 @@
-
-% modifier = .1:.1:3;
-% bandgaps = zeros(size(modifier,2), 50);
-% log = fopen(['logScale1-2', '.txt'], 'w');
-% 
-% for counter = 1:size(modifier,2)
-clearvars %-except modifier bandgaps counter log
-
 close all
+clearvars
 
-% diplay progress
-% fprintf('%d of %d\n', counter, size(modifier,2))
-
-% color
-grey = [.7, .7, .7];
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  -------------------------------- BEGIN -----------------------------------
 %
 %% creating mesh
 nameMesh = 'corse';
 % cell length [m]
-l1 = 0.10;%*modifier(counter);
+l1 = 0.10;
 % cell height [m]
-l2 = 0.10;%*modifier(counter);
+l2 = 0.10;
 % radius out and in [m]
-rOut = 0.02;%*modifier(counter);
+rOut = 0.03;
 rIn = 0;
 % mesh settings
 lc = 1;
@@ -49,9 +37,10 @@ createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
 load("material.mat");
 
 % mat: outer material -> inner material
-mat = [1, 2];
+mat = [1, 5];
 
-% material(mat(2),3) = (modifier(counter));
+% material matrix (1)E[N/m^2], (2)v[-], (3)rho[kg/m3], (4)t[m]
+% material(mat(1),2) = 0;
 
 % (plane) "strain", "stress"
 physics = "strain";
@@ -68,8 +57,11 @@ elemType = 'q9';
 %  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% loading mesh
-evalin('caller', [nameMesh, 'MESH']);
+%% loading mesh
+% evalin('caller', [nameMesh, 'MESH']);
+
+% quadratic mesh with no fill
+corseNoFill
 
 %% getting parameters
 % number Elements
@@ -85,13 +77,11 @@ matPropComsol = [
     ];
 
 matProp = material(mat,:);
+% matProp = matPropComsol;
 
 
 matName = materialNames(mat);
 matIdx = msh.QUADS9(:, end);
-
-%% generate log-file with mat properties
-% createLog(log, counter, l1, l2, rIn, rOut, matProp, matName);
 
 %% getting mesh informations
 % global degree of freedom
@@ -167,7 +157,7 @@ end
 nBand = 6;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
-deltaKxy0 = 144;
+deltaKxy0 = 50;
 
 % Festlegung der Bloch-Floquet-Randbedingungen:
 %
@@ -272,24 +262,20 @@ parfor kindx = 1:size(kx0, 1)
     ABand(:, :, kindx) = AEig0PBC;
 end
 
-%-------------------comment out if not needed----------------------------
-% currentBand = getBandgaps(fBand); 
-% bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
-
-%end
-
-% fclose(log);
-%------------------------------------------------------------------------
 %% plotting dispersion curves
 
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
 
 % dimensions for 3 figs (dispersion curves) in a row
-plotDimensions(gca, gcf, 5.3, 5, .67);
+% plotDimensions(gca, gcf, 5.3, 5, .67);
+
+% dimensions for 2 figs in a row
+plotDimensions(gca, gcf, 7, 7, 5/7);
+plotOffset(gca, 3);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 0;
+nPBCEig = 1;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
@@ -303,7 +289,7 @@ PMshStudy = 0;
 % KPlotPBCEF ist ein vorgegebener Wellenvektor, fuer den die Eigenform geplottet
 % werden soll, beispielswiese [0; 0] waere die Stelle Gamma im Dispersionsdiagramm 
 % und [pi; 0] die Stelle X, [pi; pi] M
-KPlotPBCEF = [pi; 0];
+KPlotPBCEF = [pi; pi];
 kxEF = KPlotPBCEF(1);
 kyEF = KPlotPBCEF(2);
 % Index von KPlotPBCEF in der Matrix der Wellenvektoren bestimmen
