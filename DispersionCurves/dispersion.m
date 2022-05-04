@@ -58,10 +58,10 @@ elemType = 'q9';
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% loading mesh
-% evalin('caller', [nameMesh, 'MESH']);
+evalin('caller', [nameMesh, 'MESH']);
 
 % quadratic mesh with no fill
-corseNoFill
+% corseNoFill
 
 %% getting parameters
 % number Elements
