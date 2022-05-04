@@ -110,14 +110,14 @@ D4GX=[
 
 % XM-direction
 D3XM=[
-    -d23+d24+d13-d14, zeros(size(d15)), -d28+d18; 
+    -d23+d13+d24-d14, zeros(size(d15)), -d28+d18; 
     -d37'+d47'+d35'-d45', zeros(size(d57)), d58-d78; 
-    d28'-d48', zeros(size(d58')), d68']; % why d68 transp?
+    d36'-d46', zeros(size(d58')), d68];
 
 D4XM=[
-    -(d34+d34')-(d12+d12')+d33+d44+d11+d22, -d25+d15+d27-d17, -d48-d26+d38+d16;
-    -d25'+d15'+d27'-d17', -(d57+d57')+d55+d77, d56-d67;
-    -d48'-d26'+d16'+d38', d56'-d67', d66+d88];
+    -(d34+d34')-(d12+d12')+d33+d44+d11+d22, -d25+d15+d27-d17, -d48-d26+d16+d38;
+    -d25'+d15'+d27'-d17', -(d57+d57')+d55+d77, d56-d67';
+    -d48'-d26'+d16'+d38', d56'-d67, d66+d88];
 
 % MG-direction
 D1MG=[
@@ -128,35 +128,35 @@ D1MG=[
 D2MG=[
     (d34+d12)*theta+d13+d24, d17*theta, d18; 
     d25'*theta+d47'+d35', d57*theta, d58; 
-    d36'+(d48'+d26')*theta, d67'*theta, d68']; % why d68 transp?
+    d36'+(d48'+d26')*theta, d67*theta, d68]; 
 
 
 D3MG=[
     d23*theta+(d33+d44+d11+d22)+d23*theta^(-1), d37*theta+(d15+d27), d28*theta^(-1)+d16+d38; 
-    d15'+d27'+d37'*theta^(-1), d55+d77, d56+d78'*theta^(-1); 
+    d15'+d27'+d37'*theta^(-1), d55+d77, d56+d78*theta^(-1); 
     d28'*theta+d16'+d38', d78'*theta+d56', d66+d88];
 
 % GY-direction
 D3GY=[
-    d23+d34+d12+d14, zeros(size(d15)), d36+d16; 
-    d27'+d47'+d25'-d45', zeros(size(d57)), d56+d67'; 
-    d28'+d48', zeros(size(d58')), d68'];
+    d23+d13+d24+d14, zeros(size(d15)), d18+d28; 
+    d37'+d47'+d35'-d45', zeros(size(d57)), d58+d78; 
+    d36'+d46', zeros(size(d58')), d68]; 
 
 D4GY=[
-    (d13+d13')+(d24+d24')+d33+d44+d11+d22, d35+d15+d37+d17, d38+d46+d18+d26;
-    d35'+d15'+d37'+d17', (d57+d57')+d55+d77, d58+d78;
-    d38'+d46'+d18'+d26', d58'+d78', d66+d88];
+    (d34+d34')+(d12+d12')+d33+d44+d11+d22, d25+d15+d27+d17, d16+d38+d48+d26;
+    d25'+d15'+d27'+d17', (d57+d57')+d55+d77, d56+d67';
+    d16'+d38'+d48'+d26', d56'+d67, d66+d88];
 
 % YM-direction
 D3YM=[
-    d13-d14-d23+d24, d17-d27, zeros(size(d18));
-    d35'-d45', d57, zeros(size(d58));
-    d46'-d48'-d36'+d38', -d67+d78',zeros(size(d88))];
+    -d23+d34+d12-d14, d17-d37, zeros(size(d18));
+    d25'-d45', d57, zeros(size(d58));
+    -d28'+d48'+d26'-d46', -d78'+d67,zeros(size(d88))];
 
 D4YM=[
-    -(d34+d34')-(d12+d12')+d33+d44+d11+d22, -d47+d15-d25+d37, -d28+d18+d26-d16;
-    -d47'+d15'-d25'+d37', d55+d77, -d56+d58; 
-    -d28'+d18'+d26'-d16',-d56'+d58', -(d68'+d68)+d66+d88];
+    -(d13+d13')-(d24+d24')+d33+d44+d11+d22, -d47-d35+d15+d27, -d36+d16+d38-d18;
+    -d47'-d35'+d15'+d27', d55+d77, d56-d58; 
+    -d36'+d16'+d38'-d18',d56'-d58', -(d68'+d68)+d66+d88];
 
 % D1MGq=D1MG*theta^(-2);
 %
