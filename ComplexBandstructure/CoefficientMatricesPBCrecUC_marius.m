@@ -1,5 +1,5 @@
 function [K3GX, K4GX,K3XM, K4XM,K1MG, K2MG, K3MG, K3GY, K4GY, K3YM, K4YM]  = ...
-    CoefficientMatricesPBCrecUC(Kred,InputIdx,OutputIdx,PBCdiff,theta)
+    CoefficientMatricesPBCrecUC_marius(Kred,InputIdx,OutputIdx,PBCdiff,theta)
 % Marius
 %% Calculation of indice vectors 
 %
@@ -87,6 +87,8 @@ k78=Kred(OutputX,InputY);
 k88=Kred(InputY,InputY);
 
 %% Calculation of coefficient matrices
+% k68 transp. necessary, because entry k86 should be k86=Kred(InputY,
+% OutputX), but because of symmetry only k68 exists.
 %
 % GX-direction
 K3GX=[
