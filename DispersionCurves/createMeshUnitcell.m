@@ -1,4 +1,5 @@
-function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, factorMesh)
+function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, ...
+    factorMesh, order)
     %CREATE_UNITCELL creates a unitcell with gmsh
     %   creates and executes gmsh *.geo-file for 2D mesh
     %   skip rIn to create only one circle
@@ -101,7 +102,7 @@ function createMeshUnitcell(filename, l1, l2, rOut, rIn, lc, maxMesh, factorMesh
     fprintf(fileid, 'Mesh.MeshSizeMax = maxMesh;\n');
     fprintf(fileid, 'Mesh.MeshSizeFactor = factorMesh;\n');
 
-    fprintf(fileid, 'Mesh.ElementOrder = 2;\n');
+    fprintf(fileid, 'Mesh.ElementOrder = %d;\n', order);
 
     fclose(fileid);
 
