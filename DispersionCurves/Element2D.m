@@ -152,8 +152,12 @@ switch elemType
             (1 + xi)*(1 + eta);
             (1 - xi)*(1 + eta);
             ];
-        
-        diffs = []; % TODO
+
+        diffs = [
+            eta/4 - 1/4, xi/4 - 1/4
+            1/4 - eta/4, -xi/4 - 1/4
+            eta/4 + 1/4,xi/4 + 1/4
+            -eta/4 - 1/4, 1/4 - xi/4]; 
     
     case 'q8'
         shape = 1/4*[
