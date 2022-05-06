@@ -61,11 +61,11 @@ function [intNodes, weights] = gaussQuadrature(order)
 %
 
 switch order
-    case 1
+    case 'reduced'
         intNodes = [0, 0];
         weights = [2, 2];
 
-    case 'reduced' % 2 gauss points sind ausreichend for exact integraion of polynominal order 2
+    case 1
         intNodes = [
             -0.577350269189626, -0.577350269189626;
             -0.577350269189626, 0.577350269189626;
@@ -74,7 +74,7 @@ switch order
             ];
         weights = [1, 1, 1, 1];
 
-    case 2 % 3 integration points TODO fixing order and let gauss points variable
+    case 2
         intNodes = [
             -0.774596669241483, -0.774596669241483;
             -0.774596669241483, 0;
@@ -153,11 +153,11 @@ switch elemType
             (1 - xi)*(1 + eta);
             ];
 
-        diffs = [
-            eta/4 - 1/4, xi/4 - 1/4
-            1/4 - eta/4, -xi/4 - 1/4
-            eta/4 + 1/4,xi/4 + 1/4
-            -eta/4 - 1/4, 1/4 - xi/4]; 
+        diffs = 1/4*[
+            eta - 1, xi - 1
+            1 - eta, -xi - 1
+            eta + 1,xi + 1
+            -eta - 1, 1 - xi]; 
     
     case 'q8'
         shape = 1/4*[
