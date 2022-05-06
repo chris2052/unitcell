@@ -2,11 +2,13 @@ function [IdxPBCIn,IdxPBCOut,TransVec,BasisVec]=IndexPBC3D(Nodes,di,PBC0,minNode
 numPBC=size(PBC0,1);
 mindDist=minNodeDist;
 sizeVec=zeros(numPBC,1);
-maxLength=sqrt((PBC0(4)-PBC0(1))^2+(PBC0(5)-PBC0(2))^2+(PBC0(6)-PBC0(3))^2);
+% maxLength=sqrt((PBC0(4)-PBC0(1))^2+(PBC0(5)-PBC0(2))^2+(PBC0(6)-PBC0(3))^2);
+maxLength=max(max(((PBC0(:,4)-PBC0(:,1)).^2+(PBC0(:,5)-PBC0(:,2)).^2+(PBC0(:,6)-PBC0(:,3)).^2).^(0.5)));
 nmax=ceil(maxLength/mindDist)+1;
 IdxPBC=zeros(numPBC,nmax*di);
 % BasisVec=zeros(numPBC/2,2);
 BasisVec=[PBC0(2:2:end,1)-PBC0(1:2:end,1),PBC0(2:2:end,2)-PBC0(1:2:end,2),PBC0(2:2:end,3)-PBC0(1:2:end,3)];
+
 for i=1:numPBC
 %     Bvecidx=ceil(i/2);
     PBC00=PBC0(i,:);
@@ -26,7 +28,7 @@ for i=1:numPBC
     Idx0=unique(Idx0,'stable');
     Idx0=reshape(repmat(Idx0,di,1)*di-repmat(fliplr([0:di-1])',1,size(Idx0,1)),[],1)';
     sizeVec(i,1)=size(Idx0,2);
-    IdxPBC(i,1:sizeVec)=Idx0;
+    IdxPBC(i,1:sizeVec(i))=Idx0;
 end
 IdxPBC( :, ~any(IdxPBC,1) ) = [];  %delete zero columns
 IdxPBCIn=reshape(IdxPBC(1:2:end,:)',[],1);
