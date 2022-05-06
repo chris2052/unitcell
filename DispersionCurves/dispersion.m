@@ -20,7 +20,7 @@ lc = 1;
 maxMesh = 40e-3;
 factorMesh = 1;
 
-createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
+createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 
 %% material properties
 % Matrix material index for PnC=1!     !!v!!
@@ -138,9 +138,9 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% getting eingenfrequencies
-% omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
-% f = real(sqrt(omega2) / (2 * pi));
-% disp(f);
+omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+f = real(sqrt(omega2) / (2 * pi));
+disp(f);
 
 %% Dispersion Curves
 %
@@ -154,7 +154,7 @@ end
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 6;
+nBand = 8;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 50;
@@ -275,7 +275,7 @@ plotOffset(gca, 3);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 1;
+nPBCEig = 0;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
