@@ -23,7 +23,7 @@ nameMesh = 'medium';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 20e-3;
+maxMesh = 40e-3;
 factorMesh = 1;
 
 % order for gauss quadrature
@@ -33,7 +33,7 @@ dof = 2;
 % Element Type (number of nodes per element)
 elemType = 'q9';
 % ratio lambdax/lambday
-theta = l1/l2;
+theta = 1;
 
 % Minimum node distance to be considered, important for node indexing when line 
 % boundary conditions are applied. Usually this value doesnt have to be changed.
@@ -71,7 +71,7 @@ physics = "strain";
 
 %% getting mesh parameters
 % creating mesh
-createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh);
+createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 % loading mesh
 evalin('caller', [nameMesh, 'MESH']);
 % number Elements
@@ -118,6 +118,19 @@ end
 % global stiffness and mass matrizes
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
+% model=mphload('ExampleComplexBandStructure.mph'); %Load model from COMSOL
+% str = mphmatrix(model, 'sol1', 'out', {'Kc','Ec','K','E'});
+% info = mphxmeshinfo(model);
+% Ksys=sparse(str.K);                           %full stiffness matrix
+% Msys=sparse(str.E);                           %full mass matrix
+% InitialNodes = [info.nodes.coords', zeros(size(info.nodes.coords',1),1)];
+% % InitialNodes=info.dofs.coords';
+% % InitialNodes=InitialNodes(1:2:end,:);
+% % InitialNodes=[InitialNodes, zeros(size(InitialNodes,1),1)];
+% numDoF=info.ndofs;
+% % load model_information.mat;
+
+
 %% Calculation of complex valued band structure k(omega)
 %
 PBC0 = [
@@ -151,7 +164,7 @@ parfor (idxComp=1:ceil(OmegC/dOmegC)+1,ParaComp)
     KdynPBC=Ksys-omegComp^2*Msys;
     [KdynPBCred,~,~,~,~]=FastGuyanReduction(KdynPBC,KdynPBC,KdynPBC,SlaveDofsPBC);
     % [K3GX, K4GX, K3XM, K4XM, K1MG, K2MG, K3MG,K1MGq, K2MGq] = CoefficientMatricesPBCrecUC_marius(KdynPBCred,IdxPBCCompIn,IdxPBCCompOut,PBCCompTrans,theta);
-    [K3GX, K4GX, K3XM, K4XM, K1MG, K2MG, K3MG,K1MGq, K2MGq] = ...
+    [K3GX, K4GX, K3XM, K4XM, K1MG, K2MG, K3MG, ~, ~] = ...
         CoefficientMatricesPBCrect(KdynPBCred, IdxPBCCompIn, IdxPBCCompOut,... 
         PBCCompTrans, theta);
     lambXiGX = quadeig(K3GX,K4GX,transpose(K3GX));
@@ -159,7 +172,7 @@ parfor (idxComp=1:ceil(OmegC/dOmegC)+1,ParaComp)
 
     if size(BasisVec,1)>1
         lambXiXM = quadeig(K3XM,K4XM,transpose(K3XM));
-        lambXiMG = polyeig(transpose(K1MGq),transpose(K2MGq),K3MG,K2MG,K1MG);
+        lambXiMG = polyeig(transpose(K1MG),transpose(K2MG),K3MG,K2MG,K1MG);
         kxSCXM0{idxComp}=i*log(lambXiXM);
         kxSCMG0{idxComp}=i*log(lambXiMG);
     end
