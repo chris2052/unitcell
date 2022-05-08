@@ -23,11 +23,11 @@ nameMesh = 'quads';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 40e-3;
-factorMesh = 1;
+maxMesh = 400e-3;
+factorMesh = 10;
 
 % order for gauss quadrature
-order = 2;
+order = 1;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 % Element Type (number of nodes per element)
