@@ -260,94 +260,132 @@ omegSCMG = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCMGRe,1),1);
 %% plotting
 %
 % Font for all plots 
-Font="CMU Serif";
+% Font="CMU Serif";
 % Font size for all plots 
-FontSize=11;
+% FontSize=11;
 % Set default axes line width
-AxesLineWidth=1;
+% AxesLineWidth=1;
 % Set default line width of all lines within plots
-LineLineWidth=1;
+% LineLineWidth=1;
 % Set marker size for complex band structure
-MarkerSize1=1;
+MarkerSize1 = 1;
  
-set(0, 'DefaultAxesLineWidth', AxesLineWidth);
-set(0, 'DefaultLineLineWidth', LineLineWidth);
+% set(0, 'DefaultAxesLineWidth', AxesLineWidth);
+% set(0, 'DefaultLineLineWidth', LineLineWidth);
 
 DRed=[0.70 0.2 0.2];                   %Dark Red
 DBlue=[.2 .2 0.7];                     %Dark Blue 
 
 ComplBandFig = figure;
-ComplBandFig.Position(1:2) = [200, 300];
+ComplBandFig.Units = 'centimeters';
+ComplBandFig.Position = [10, 10, 15, 10];
 
 ComplBandReAx = axes(ComplBandFig);
+ComplBandReAx.Position = [0.1 0.1 0.5 0.8];
+ComplBandReAx.Box = 'on';
 
-set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
-tilpltBG = tiledlayout(1,2,'TileSpacing','none');
+% set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
+% tilpltBG = tiledlayout(1,2,'TileSpacing','none');
+% 
+% nexttile(tilpltBG)
 
-nexttile(tilpltBG)
+hold(ComplBandReAx, 'on')
 
-hold on
-
-CompFreqBandsPRe1=plot(PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi, omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsPRe2=plot(PRekxSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsPRe3=plot(-PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+% CompFreqBandsPRe1
+plot(ComplBandReAx, PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi, ...
+    omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3)), 'o', ...
+    'MarkerSize',MarkerSize1, 'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsPRe2
+plot(ComplBandReAx, PRekxSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3))/pi+1, ...
+    omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3)),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsPRe3
+plot(ComplBandReAx, -PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3))/pi+3, ...
+    omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3)),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsCRe1=plot(CRekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi, omegSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
 % CompFreqBandsCRe2=plot(CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
 % CompFreqBandsCRe3=plot(-CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
 
-axis([0 3 0 maxf]);
-xticks(0:1:3)% create tick marks at 1/4 multiples of pi
-xticklabels({'\Gamma', 'X', 'M','\Gamma'})
-
+axis(ComplBandReAx, [0 3 0 maxf]);
+xticks(ComplBandReAx, 0:1:3)% create tick marks at 1/4 multiples of pi
+xticklabels(ComplBandReAx, {'$\Gamma$', 'X', 'M','$\Gamma$'})
+xtickangle(ComplBandReAx, 0);
+% ComplBandReAx.TickLabelInterpreter = 'none';
 % end
-box on
 
-set(gca,'Layer','top')
+% set(ComplBandReAx,'Layer','top')
 % pbaspect([1 1.2 1]);
-xlabel('$\Re(\bf{k})$','interpreter', 'latex')
-ylabel('$f$ [Hz]','interpreter', 'latex')
-yticks(0:100:maxf)
+xlabel(ComplBandReAx, '$\Re(\bf{k})$','interpreter', 'none')
+ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
+% yticks(ComplBandReAx, 0:100:maxf)
 % yticklabels([0 2 4 6 8 10 12 14])
-grid on
-figureHandle = gcf;
-set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
-set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
-hold off
+grid(ComplBandReAx, 'on')
+% figureHandle = gcf;
+% set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
+% set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
+hold(ComplBandReAx, 'off')
 
+% nexttile(tilpltBG)
+% set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
+ComplBandImAx = axes(ComplBandFig);
+ComplBandImAx.Position = [0.65 0.1 0.3 0.8];
+ComplBandImAx.Box = 'on';
 
-nexttile(tilpltBG)
-set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
-hold on
+hold(ComplBandImAx, 'on')
 
-CompFreqBandsPIm1=plot(PImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsPIm2=plot(PImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsPIm3=plot(PImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsCIm1=plot(CImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-CompFreqBandsCIm2=plot(CImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-CompFreqBandsCIm3=plot(CImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-CompFreqBandsRIm1=plot(RImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsRIm2=plot(RImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-CompFreqBandsRIm3=plot(RImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+% CompFreqBandsPIm1
+plot(ComplBandImAx, PImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsPIm2
+plot(ComplBandImAx, PImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsPIm3
+plot(ComplBandImAx, PImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsCIm1
+plot(ComplBandImAx, CImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+% CompFreqBandsCIm2
+plot(ComplBandImAx, CImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+% CompFreqBandsCIm3
+plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+% CompFreqBandsRIm1
+plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsRIm2
+plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+% CompFreqBandsRIm3
+plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
     
-axis([0 3 0 (OmegC+0.1)/(2*pi)]);
+axis(ComplBandImAx, [0 3 0 (OmegC+0.1)/(2*pi)]);
 
 hold off
 
-pbaspect([1 1.2 1]);
+% pbaspect([1 1.2 1]);
 
-grid on
+grid(ComplBandImAx, 'on')
 
-xlabel('$\Im(\bf{k})$','interpreter', 'latex')
-figureHandle = gcf;
+xlabel(ComplBandImAx, '$\Im(\bf{k})$','interpreter', 'none')
+% figureHandle = gcf;
 
-set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
-set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
-set(gca,'ytick',[])
-set(gca,'yticklabel',[])
+% set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
+% set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
+% set(ComplBandImAx, 'ytick',[])
+set(ComplBandImAx, 'yticklabel',[])
 
-box on
+% set(findall(ComplBandFig,'type','text'),'fontSize',11)
+set(findall(ComplBandFig,'type','axes'),'fontSize',11)
 
-set(gca,'Layer','top')
+ChangeInterpreter(ComplBandFig, 'none')
 
-tilplt.TileSpacing = 'none';
-tilplt.Padding = 'none';
+% box on
+
+% set(gca,'Layer','top')
+
+% tilplt.TileSpacing = 'none';
+% tilplt.Padding = 'none';
