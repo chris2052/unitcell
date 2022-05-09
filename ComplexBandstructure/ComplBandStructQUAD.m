@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-% matProp = matComsol;
+matProp = matComsol;
 
 % global degree of freedom
 gDof = dof * msh.nbNod;
@@ -131,6 +131,11 @@ end
 % global stiffness and mass matrizes
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
+%% Calculation of complex valued band structure k(omega)
+%
+InitialNodes = nodesGlob;
+numDoF = gDof;
+
 % model=mphload('ExampleComplexBandStructure.mph'); %Load model from COMSOL
 % str = mphmatrix(model, 'sol1', 'out', {'Kc','Ec','K','E'});
 % info = mphxmeshinfo(model);
@@ -143,17 +148,12 @@ end
 % numDoF=info.ndofs;
 % load model_information.mat;
 
-
-%% Calculation of complex valued band structure k(omega)
-%
 PBC0 = [
     -l1/2, -l2/2, 0, -l1/2, l2/2, 0;
     l1/2, -l2/2, 0, l1/2, l2/2, 0;
     -l1/2, -l2/2, 0, l1/2, -l2/2, 0;
     -l1/2, l2/2, 0, l1/2, l2/2, 0];
 
-InitialNodes = nodesGlob;
-numDoF = gDof;
 
 [IdxPBCIn,IdxPBCOut,PBCTrans,BasisVec]=IndexPBC3D(InitialNodes,dof,PBC0,minNodeDist);  
 i=sqrt(-1);
@@ -172,7 +172,7 @@ plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
 % plotDimensions(gca, gcf, 7, 7, 5/7);
 % plotOffset(gca, 3);
 
-%% 
+%% Calculation of complex band structure
 %
 % round to next 10th
 maxf = ceil(real(max(max(fBand))/10))*10;
@@ -195,9 +195,10 @@ tic
 updateWaitbarCompBands = waitbarParfor(ceil(OmegC/dOmegC)+1, ...
 "Calculation of complex band structure in progress...");
 
-% for idxComp=1:ceil(OmegC/dOmegC)+1
+% for idxComp=1:ceil(OmegC/dOmegC)
 parfor (idxComp=1:ceil(OmegC/dOmegC)+1,ParaComp)
     omegComp=dOmegC*(idxComp-1)+0.1;
+    omegeTest(idxComp) = omegComp;
     KdynPBC=Ksys-omegComp^2*Msys;
     [KdynPBCred,~,~,~,~]=FastGuyanReduction(KdynPBC,KdynPBC,KdynPBC,SlaveDofsPBC);
     % [K3GX, K4GX, K3XM, K4XM, K1MG, K2MG, K3MG, ~, ~, ~, ~] = CoefficientMatricesPBCrecUC_marius(KdynPBCred,IdxPBCCompIn,IdxPBCCompOut,PBCCompTrans,theta);
@@ -253,9 +254,9 @@ CImkxSCGX = imag(kxSCGXCom);
 CImkxSCXM = imag(kxSCXMCom);
 CImkxSCMG = imag(kxSCMGCom);
 
-omegSCGX = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCGXRe,1),1);
-omegSCXM = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCXMRe,1),1);
-omegSCMG = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCMGRe,1),1);
+omegSCGX = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCGXRe,1),1);
+omegSCXM = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCXMRe,1),1);
+omegSCMG = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCMGRe,1),1);
 
 %% plotting
 %
@@ -288,6 +289,7 @@ ComplBandReAx.Box = 'on';
 % tilpltBG = tiledlayout(1,2,'TileSpacing','none');
 % 
 % nexttile(tilpltBG)
+..........................
 
 hold(ComplBandReAx, 'on')
 
@@ -335,31 +337,31 @@ ComplBandImAx.Box = 'on';
 hold(ComplBandImAx, 'on')
 
 % CompFreqBandsPIm1
-plot(ComplBandImAx, PImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, PImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsPIm2
-plot(ComplBandImAx, PImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, PImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsPIm3
-plot(ComplBandImAx, PImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, PImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsCIm1
-plot(ComplBandImAx, CImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, CImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 % CompFreqBandsCIm2
-plot(ComplBandImAx, CImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, CImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 % CompFreqBandsCIm3
-plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 % CompFreqBandsRIm1
-plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsRIm2
-plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 % CompFreqBandsRIm3
-plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:OmegC+0.1)/(2*pi),'o', ...
+plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
     
 axis(ComplBandImAx, [0 3 0 (OmegC+0.1)/(2*pi)]);
