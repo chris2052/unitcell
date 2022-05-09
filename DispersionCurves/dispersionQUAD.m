@@ -88,8 +88,8 @@ matPropComsol = [
     200e9, 0.34, 8e3, 1;
     ];
 
-matProp = material(mat,:);
-% matProp = matPropComsol;
+% matProp = material(mat,:);
+matProp = matPropComsol;
 
 
 matName = materialNames(mat);
@@ -166,7 +166,7 @@ disp(f);
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 8;
+nBand = 6;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 50;
