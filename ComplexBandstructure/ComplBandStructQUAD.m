@@ -11,7 +11,7 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.15;
+l1 = 0.10;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
@@ -19,15 +19,15 @@ rOut = 0.03;
 rIn = 0;
 %
 % mesh settings
-nameMesh = 'quads';
+nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 400e-3;
-factorMesh = 10;
+maxMesh = 40e-3;
+factorMesh = 1;
 
-% order for gauss quadrature
-order = 1;
+% order of element shape functions
+order = 2;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 % Element Type (number of nodes per element)
@@ -38,10 +38,6 @@ theta = 1;
 % Minimum node distance to be considered, important for node indexing when line 
 % boundary conditions are applied. Usually this value doesnt have to be changed.
 minNodeDist=0.0001;
-% omega intervall end value for calculation of complex band structure
-OmegC=14000*2*pi;
-% omega intervall increment value
-dOmegC=100*2*pi;
 % Set parallel computing (yes/no). Parallel computing is only effective for 
 % large systems (statistics and machine learning Toolbox for improvement)
 ParaComp=12;
@@ -60,8 +56,11 @@ ParaComp=12;
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [3, 5];
-
+mat = [1,2];
+matComsol = [
+    2e9, 0.45, 1e3, 1;
+    200e9, 0.34, 8e3, 1;
+    ];
 % (plane) "strain", "stress"
 physics = "strain";
 
@@ -74,7 +73,7 @@ physics = "strain";
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 % loading mesh
 evalin('caller', [nameMesh, 'MESH']);
-% quad4 or quad9 elements
+% quad4 or quad9 elements (depends on `order`)
 switch order
     case 1
         quads = msh.QUADS;
@@ -93,6 +92,9 @@ nodPEle = size(quads, 2) - 1;
 matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
+
+% matProp = matComsol;
+
 % global degree of freedom
 gDof = dof * msh.nbNod;
 % xy-components, z is 0
@@ -155,6 +157,30 @@ numDoF = gDof;
 
 [IdxPBCIn,IdxPBCOut,PBCTrans,BasisVec]=IndexPBC3D(InitialNodes,dof,PBC0,minNodeDist);  
 i=sqrt(-1);
+
+%% calculating and plotting dispersion curves
+
+[fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(8, 50, PBCTrans, BasisVec, ...
+    IdxPBCIn, IdxPBCOut, Ksys, Msys);
+
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+
+% dimensions for 3 figs (dispersion curves) in a row
+% plotDimensions(gca, gcf, 5.3, 5, .67);
+
+% dimensions for 2 figs in a row
+% plotDimensions(gca, gcf, 7, 7, 5/7);
+% plotOffset(gca, 3);
+
+%% 
+%
+% round to next 10th
+maxf = ceil(real(max(max(fBand))/10))*10;
+% omega intervall end value for calculation of complex band structure
+OmegC = maxf*2*pi;
+% omega intervall increment value
+dOmegC = round(maxf/150) * 2*pi;
+
 numredDoF=numDoF-size(unique(IdxPBCOut),1);
 redDoF=1:numDoF;
 redDoF(:,unique(IdxPBCOut))=[];
@@ -206,21 +232,27 @@ fprintf(['Calculation time for one frequency step is approximately ', ...
 [kxSCGXRe, kxSCGXIm, kxSCGXCom] = filterCBS_2DFEM(kxSCGX);
 [kxSCXMRe, kxSCXMIm, kxSCXMCom] = filterCBS_2DFEM(kxSCXM);
 [kxSCMGRe, kxSCMGIm, kxSCMGCom] = filterCBS_2DFEM(kxSCMG);
+
 PRekxSCGX = real(kxSCGXRe);
 PRekxSCXM = real(kxSCXMRe);
 PRekxSCMG = real(kxSCMGRe);
+
 CRekxSCGX = real(kxSCGXCom);
 CRekxSCXM = real(kxSCXMCom);
 CRekxSCMG = real(kxSCMGCom);
+
 RImkxSCGX = imag(kxSCGXRe);
 RImkxSCXM = imag(kxSCXMRe);
 RImkxSCMG = imag(kxSCMGRe);
+
 PImkxSCGX = imag(kxSCGXIm);
 PImkxSCXM = imag(kxSCXMIm);
 PImkxSCMG = imag(kxSCMGIm);
+
 CImkxSCGX = imag(kxSCGXCom);
 CImkxSCXM = imag(kxSCXMCom);
 CImkxSCMG = imag(kxSCMGCom);
+
 omegSCGX = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCGXRe,1),1);
 omegSCXM = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCXMRe,1),1);
 omegSCMG = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCMGRe,1),1);
@@ -230,13 +262,13 @@ omegSCMG = repmat((0.1:dOmegC:OmegC+0.1)/(2*pi),size(kxSCMGRe,1),1);
 % Font for all plots 
 Font="CMU Serif";
 % Font size for all plots 
-FontSize=26;
+FontSize=11;
 % Set default axes line width
 AxesLineWidth=1;
 % Set default line width of all lines within plots
 LineLineWidth=1;
 % Set marker size for complex band structure
-MarkerSize1=2;
+MarkerSize1=1;
  
 set(0, 'DefaultAxesLineWidth', AxesLineWidth);
 set(0, 'DefaultLineLineWidth', LineLineWidth);
@@ -244,7 +276,10 @@ set(0, 'DefaultLineLineWidth', LineLineWidth);
 DRed=[0.70 0.2 0.2];                   %Dark Red
 DBlue=[.2 .2 0.7];                     %Dark Blue 
 
-figure
+ComplBandFig = figure;
+ComplBandFig.Position(1:2) = [200, 300];
+
+ComplBandReAx = axes(ComplBandFig);
 
 set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
 tilpltBG = tiledlayout(1,2,'TileSpacing','none');
@@ -260,7 +295,7 @@ CompFreqBandsPRe3=plot(-PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round
 % CompFreqBandsCRe2=plot(CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
 % CompFreqBandsCRe3=plot(-CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
 
-axis([0 3 0 (OmegC+0.1)/(2*pi)]);
+axis([0 3 0 maxf]);
 xticks(0:1:3)% create tick marks at 1/4 multiples of pi
 xticklabels({'\Gamma', 'X', 'M','\Gamma'})
 
@@ -268,16 +303,18 @@ xticklabels({'\Gamma', 'X', 'M','\Gamma'})
 box on
 
 set(gca,'Layer','top')
-pbaspect([1 1.2 1]);
+% pbaspect([1 1.2 1]);
 xlabel('$\Re(\bf{k})$','interpreter', 'latex')
-ylabel('$f$ [kHz]','interpreter', 'latex')
-yticks(0:2000:14000)
-yticklabels([0 2 4 6 8 10 12 14])
+ylabel('$f$ [Hz]','interpreter', 'latex')
+yticks(0:100:maxf)
+% yticklabels([0 2 4 6 8 10 12 14])
 grid on
 figureHandle = gcf;
 set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
 set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
 hold off
+
+
 nexttile(tilpltBG)
 set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
 hold on
