@@ -11,6 +11,8 @@
 # gmsh-files
 *.geo
 *.msh
+# COMSOL files
+*.mph
 plotDispersionAlex.m
 testing.geo
 *ExportMesh.m
