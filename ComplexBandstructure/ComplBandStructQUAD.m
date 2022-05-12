@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-matProp = matComsol;
+% matProp = matComsol;
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
@@ -182,7 +182,7 @@ maxf = ceil(real(max(max(fBand))/10))*10;
 % omega intervall end value for calculation of complex band structure
 OmegC = maxf*2*pi;
 % omega intervall increment value
-dOmegC = round(maxf/200) * 2*pi;
+dOmegC = round(maxf/500) * 2*pi;
 
 numredDoF=numDoF-size(unique(IdxPBCOut),1);
 redDoF=1:numDoF;
@@ -231,194 +231,21 @@ end
 fprintf(['Calculation time for one frequency step is approximately ', ...
     num2str(CompBandStepTime), ' [s].', '\n'])
 
+%% plotting
+
 [kxSCGXRe, kxSCGXIm, kxSCGXCom] = filterCBS_2DFEM(kxSCGX);
 [kxSCXMRe, kxSCXMIm, kxSCXMCom] = filterCBS_2DFEM(kxSCXM);
 [kxSCMGRe, kxSCMGIm, kxSCMGCom] = filterCBS_2DFEM(kxSCMG);
 
-PRekxSCGX = real(kxSCGXRe);
-PRekxSCXM = real(kxSCXMRe);
-PRekxSCMG = real(kxSCMGRe);
+kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, ...
+    kxSCMGIm, kxSCMGCom};
 
-CRekxSCGX = real(kxSCGXCom);
-CRekxSCXM = real(kxSCXMCom);
-CRekxSCMG = real(kxSCMGCom);
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg');
 
-RImkxSCGX = imag(kxSCGXRe);
-RImkxSCXM = imag(kxSCXMRe);
-RImkxSCMG = imag(kxSCMGRe);
 
-PImkxSCGX = imag(kxSCGXIm);
-PImkxSCXM = imag(kxSCXMIm);
-PImkxSCMG = imag(kxSCMGIm);
 
-CImkxSCGX = imag(kxSCGXCom);
-CImkxSCXM = imag(kxSCXMCom);
-CImkxSCMG = imag(kxSCMGCom);
 
-omegSCGX = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCGXRe,1),1);
-omegSCXM = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCXMRe,1),1);
-omegSCMG = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSCMGRe,1),1);
 
-%% plotting
-%
-% Font for all plots 
-% Font="CMU Serif";
-% Font size for all plots 
-% FontSize=11;
-% Set default axes line width
-% AxesLineWidth=1;
-% Set default line width of all lines within plots
-% LineLineWidth=1;
-% Set marker size for complex band structure
-MarkerSize1 = 2;
- 
-% set(0, 'DefaultAxesLineWidth', AxesLineWidth);
-% set(0, 'DefaultLineLineWidth', LineLineWidth);
 
-DRed=[0.70 0.2 0.2];                   %Dark Red
-DBlue=[.2 .2 0.7];                     %Dark Blue 
-
-% close figure, if it already exists (to update)
-if isgraphics(ComplBandFig)
-    close(ComplBandFig)
-end
-
-% show figure in fullscreen
-ComplBandFig = figure('units','normalized','outerposition',[0 0 1 1]);
-
-% set dimensions for publication
-ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [70, 10, 15, 10];
-
-ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.1 0.5 0.8];
-ComplBandReAx.Box = 'on';
-
-% set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
-% tilpltBG = tiledlayout(1,2,'TileSpacing','none');
-% 
-% nexttile(tilpltBG)
-% ..........................
-
-hold(ComplBandReAx, 'on')
-
-% CompFreqBandsPRe1
-plot(ComplBandReAx, PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi, ...
-    omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3)), 'o', ...
-    'MarkerSize',MarkerSize1, 'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsPRe2
-plot(ComplBandReAx, PRekxSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3))/pi+1, ...
-    omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3)),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsPRe3
-plot(ComplBandReAx, -PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3))/pi+3, ...
-    omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3)),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsCRe1
-plot(ComplBandReAx, CRekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi, ...
-    omegSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3)),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-% 
-% % CompFreqBandsCRe2
-% plot(ComplBandReAx, CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, ...
-%     omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'o', ...
-%     'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-% 
-% % CompFreqBandsCRe3
-% plot(ComplBandReAx, -CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, ...
-%     omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'o', ...
-%     'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-
-axis(ComplBandReAx, [0 3 0 maxf]);
-xticks(ComplBandReAx, 0:1:3)% create tick marks at 1/4 multiples of pi
-xticklabels(ComplBandReAx, {'$\Gamma$', 'X', 'M','$\Gamma$'})
-xtickangle(ComplBandReAx, 0);
-% ComplBandReAx.TickLabelInterpreter = 'none';
-% end
-
-% set(ComplBandReAx,'Layer','top')
-% pbaspect([1 1.2 1]);
-xlabel(ComplBandReAx, '$\Re(\bf{k})$','interpreter', 'none')
-ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
-% yticks(ComplBandReAx, 0:100:maxf)
-% yticklabels([0 2 4 6 8 10 12 14])
-grid(ComplBandReAx, 'on')
-% figureHandle = gcf;
-% set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
-% set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
-hold(ComplBandReAx, 'off')
-
-% nexttile(tilpltBG)
-% set(gcf, 'Position',  [0, 0, 1920/2*0.9, 1080/2*0.9])
-ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.65 0.1 0.3 0.8];
-ComplBandImAx.Box = 'on';
-
-hold(ComplBandImAx, 'on')
-
-axis(ComplBandImAx, [0 3 0 (OmegC+0.1)/(2*pi)]);
-
-% CompFreqBandsPIm1
-plot(ComplBandImAx, PImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsPIm2
-plot(ComplBandImAx, PImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsPIm3
-plot(ComplBandImAx, PImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-
-% CompFreqBandsCIm1
-plot(ComplBandImAx, CImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-
-% CompFreqBandsCIm2
-plot(ComplBandImAx, CImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-
-% CompFreqBandsCIm3
-plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-    'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
-
-% %CompFreqBandsRIm1
-% plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-%     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% 
-% % CompFreqBandsRIm2
-% plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-%     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% 
-% % CompFreqBandsRIm3
-% plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-%     'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-    
-hold(ComplBandImAx, 'off')
-
-% pbaspect([1 1.2 1]);
-
-grid(ComplBandImAx, 'on')
-
-xlabel(ComplBandImAx, '$\Im(\bf{k})$','interpreter', 'none')
-% figureHandle = gcf;
-
-% set(findall(figureHandle,'type','text'),'fontSize',FontSize,'fontWeight','normal','fontName',Font)
-% set(findall(figureHandle,'type','axes'),'fontsize',FontSize,'fontWeight','normal','fontName',Font)
-% set(ComplBandImAx, 'ytick',[])
-set(ComplBandImAx, 'yticklabel',[])
-
-% set(findall(ComplBandFig,'type','text'),'fontSize',11)
-set(findall(ComplBandFig,'type','axes'),'fontSize',10)
-
-ChangeInterpreter(ComplBandFig, 'none')
-
-% box on
-
-% set(gca,'Layer','top')
-
-% tilplt.TileSpacing = 'none';
-% tilplt.Padding = 'none';
