@@ -240,9 +240,9 @@ fprintf(['Calculation time for one frequency step is approximately ', ...
 kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, ...
     kxSCMGIm, kxSCMGCom};
 
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'pi');
 
 
 
