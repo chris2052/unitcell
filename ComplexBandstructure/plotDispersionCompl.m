@@ -189,7 +189,7 @@ switch direction
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
             case 'ci'
-            CompFreqBandsCIm3
+            % CompFreqBandsCIm3
             plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 

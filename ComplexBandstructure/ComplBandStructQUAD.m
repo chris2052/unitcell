@@ -11,7 +11,7 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.10;
+l1 = 0.15;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
@@ -56,7 +56,7 @@ ParaComp = 6;
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [1,2];
+mat = [4, 1, 5];
 matComsol = [
     2e9, 0.45, 1e3, 1;
     200e9, 0.34, 8e3, 1;
@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-% matProp = matComsol;
+matProp = matComsol;
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
@@ -133,19 +133,6 @@ end
 
 %% calculating and plotting dispersion curves
 
-% model=mphload('ExampleComplexBandStructure.mph'); %Load model from COMSOL
-% str = mphmatrix(model, 'sol1', 'out', {'Kc','Ec','K','E'});
-% info = mphxmeshinfo(model);
-% Ksys=sparse(str.K);                           %full stiffness matrix
-% Msys=sparse(str.E);                           %full mass matrix
-% InitialNodes = [info.nodes.coords', zeros(size(info.nodes.coords',1),1)];
-% % InitialNodes=info.dofs.coords';
-% % InitialNodes=InitialNodes(1:2:end,:);
-% % InitialNodes=[InitialNodes, zeros(size(InitialNodes,1),1)];
-% numDoF=info.ndofs;
-% load model_information.mat;
-
-
 % reindex boundary (periodic boundary conditions, floquet-bloch)
 
 PBC0 = [
@@ -158,22 +145,15 @@ PBC0 = [
 [IdxPBCIn,IdxPBCOut,PBCTrans,BasisVec]=IndexPBC3D(InitialNodes,dof,PBC0,minNodeDist);  
 i=sqrt(-1);
 
-%% calculating and plotting dispersion curves
+%% calculating and plotting (real) dispersion curves
 
-nBand = 8;
+nBand = 6;
 deltaKxy0 = 50;
 
-[fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, BasisVec, ...
-    IdxPBCIn, IdxPBCOut, Ksys, Msys);
+[fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, ...
+    BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys);
 
 plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
-
-% dimensions for 3 figs (dispersion curves) in a row
-% plotDimensions(gca, gcf, 5.3, 5, .67);
-
-% dimensions for 2 figs in a row
-% plotDimensions(gca, gcf, 7, 7, 5/7);
-% plotOffset(gca, 3);
 
 %% Calculation of complex band structure
 %
@@ -184,54 +164,61 @@ OmegC = maxf*2*pi;
 % omega intervall increment value
 dOmegC = round(maxf/500) * 2*pi;
 
-numredDoF=numDoF-size(unique(IdxPBCOut),1);
-redDoF=1:numDoF;
-redDoF(:,unique(IdxPBCOut))=[];
-SIdxPBCIn=unique(sort(reshape(IdxPBCIn,[],1)));
-SIdxPBCOut=unique(sort(reshape(IdxPBCOut,[],1)));
-SlaveDofsPBC=1:numDoF;
-SlaveDofsPBC([SIdxPBCIn,SIdxPBCOut])=[];
-CompNodes=InitialNodes;
-CompNodes(unique(ceil(SlaveDofsPBC/dof)),:)=[];
-[IdxPBCCompIn,IdxPBCCompOut,PBCCompTrans,~]=IndexPBC3D(CompNodes,dof,PBC0,minNodeDist);
+numredDoF = numDoF-size(unique(IdxPBCOut),1);
+redDoF = 1:numDoF;
+redDoF(:, unique(IdxPBCOut)) = [];
+SIdxPBCIn = unique(sort(reshape(IdxPBCIn, [], 1)));
+SIdxPBCOut = unique(sort(reshape(IdxPBCOut, [], 1)));
+SlaveDofsPBC = 1:numDoF;
+SlaveDofsPBC([SIdxPBCIn, SIdxPBCOut]) = [];
+CompNodes = InitialNodes;
+CompNodes(unique(ceil(SlaveDofsPBC/dof)), :) = [];
+[IdxPBCCompIn, IdxPBCCompOut, PBCCompTrans, ~] = IndexPBC3D(CompNodes, dof, PBC0, ...
+    minNodeDist);
+
 tic
-updateWaitbarCompBands = waitbarParfor(ceil(OmegC/dOmegC)+1, ...
+
+updateWaitbarCompBands = waitbarParfor(ceil(OmegC/dOmegC) + 1, ...
 "Calculation of complex band structure in progress...");
 
-% for idxComp=1:ceil(OmegC/dOmegC)
-parfor (idxComp=1:ceil(OmegC/dOmegC)+1,ParaComp)
-    omegComp=dOmegC*(idxComp-1)+0.1;
-    KdynPBC=Ksys-omegComp^2*Msys;
-    [KdynPBCred,~,~,~,~]=FastGuyanReduction(KdynPBC,KdynPBC,KdynPBC,SlaveDofsPBC);
-    [K3GX, K4GX, K3XM, K4XM, K1MG, K2MG, K3MG, ~, ~, ~, ~] = ...
+parfor (idxComp = 1:ceil(OmegC/dOmegC)+1, ParaComp)
+    
+    omegComp = dOmegC*(idxComp - 1) + 0.1;
+    
+    KdynPBC = Ksys - omegComp^2 * Msys;
+    
+    [KdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(KdynPBC, KdynPBC, KdynPBC, SlaveDofsPBC);
+    
+    [D3GX, D4GX,D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
        CoefficientMatricesPBCrect(KdynPBCred, IdxPBCCompIn, IdxPBCCompOut,... 
        PBCCompTrans, theta);
-    lambXiGX = quadeig(K3GX,K4GX,transpose(K3GX));
-    kxSCGX0{idxComp}=i*log(lambXiGX);
 
-    if size(BasisVec,1)>1
-        lambXiXM = quadeig(K3XM,K4XM,transpose(K3XM));
-        lambXiMG = polyeig(transpose(K1MG),transpose(K2MG),K3MG,K2MG,K1MG);
-        kxSCXM0{idxComp}=i*log(lambXiXM);
-        kxSCMG0{idxComp}=i*log(lambXiMG);
-    end
+    lambXiGX = quadeig(D3GX, D4GX, transpose(D3GX));
+    kxSCGX0{idxComp} = i * log(lambXiGX);
+    lambXiXM = quadeig(D3XM, D4XM, transpose(D3XM));
+    kxSCXM0{idxComp} = i * log(lambXiXM);
+    lambXiMG = polyeig(transpose(D1MG), transpose(D2MG), D3MG, D2MG, D1MG);
+    kxSCMG0{idxComp} = i * log(lambXiMG);
+    
+    lambYiGY = quadeig(D3GY, D4GY, transpose(D3GY));
+    kySCGY0{idxComp} = i * log(lambYiGY);
+    lambYiYM = quadeig(D3YM, D4YM, transpose(D3YM));
+    kySCYM0{idxComp} = i * log(lambYiYM);
 
     updateWaitbarCompBands(); 
 end
 
-CompBandStepTime=toc;
-CompBandStepTime=CompBandStepTime/(ceil(OmegC/dOmegC)+1);
-kxSCGX=cell2mat(kxSCGX0);
+CompBandStepTime = toc;
+CompBandStepTime = CompBandStepTime/(ceil(OmegC/dOmegC)+1);
+kxSCGX = cell2mat(kxSCGX0);
+kxSCXM = cell2mat(kxSCXM0);
+kxSCMG = cell2mat(kxSCMG0);
 
-if size(BasisVec,1)>1
-    kxSCXM=cell2mat(kxSCXM0);
-    kxSCMG=cell2mat(kxSCMG0);
-end
+kySCGY = cell2mat(kySCGY0);
+kySCYM = cell2mat(kySCYM0);
 
 fprintf(['Calculation time for one frequency step is approximately ', ...
     num2str(CompBandStepTime), ' [s].', '\n'])
-
-%% plotting
 
 [kxSCGXRe, kxSCGXIm, kxSCGXCom] = filterCBS_2DFEM(kxSCGX);
 [kxSCXMRe, kxSCXMIm, kxSCXMCom] = filterCBS_2DFEM(kxSCXM);
@@ -240,10 +227,25 @@ fprintf(['Calculation time for one frequency step is approximately ', ...
 kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, ...
     kxSCMGIm, kxSCMGCom};
 
+[kySCGYRe, kySCGYIm, kySCGYCom] = filterCBS_2DFEM(kySCGY);
+[kySCYMRe, kySCYMIm, kySCYMCom] = filterCBS_2DFEM(kySCYM);
+
+kySC = {kySCGYRe, kySCGYIm, kySCGYCom,kySCYMRe, kySCYMIm, kySCYMCom};
+
+%% plotting
+
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'ci');
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'pi');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'ci');
 
+if l1 ~= l2
+
+    plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'ci');
+    plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'ci');
+
+end 
+
+plotDispersionComplReal(kxSC, kySC, OmegC, dOmegC, 0)
 
 
 
