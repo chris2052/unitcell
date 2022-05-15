@@ -153,7 +153,7 @@ deltaKxy0 = 50;
 [fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, ...
     BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys);
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+% plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
 
 %% Calculation of complex band structure
 %
@@ -243,11 +243,12 @@ if l1 ~= l2
     plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'ci');
     plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'ci');
 
-end 
+    plotDispersionComplReal(kxSC, kySC, OmegC, dOmegC, 0)
 
-plotDispersionComplReal(kxSC, kySC, OmegC, dOmegC, 0)
+else 
 
+    plotDispersionComplReal(kxSC, OmegC, dOmegC, 0)
 
-
+end
 
 
