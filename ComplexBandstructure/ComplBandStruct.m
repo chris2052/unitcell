@@ -243,7 +243,7 @@ if l1 ~= l2
     plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'ci');
     plotDispersionComplY(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'ci');
 
-    plotDispersionComplReal(kxSC, kySC, OmegC, dOmegC, 0)
+    plotDispersionComplRealY(kxSC, kySC, OmegC, dOmegC, 0)
 
 else 
 
