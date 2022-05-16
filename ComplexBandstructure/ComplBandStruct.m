@@ -11,11 +11,11 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.15;
+l1 = 0.10;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.03;
+rOut = 0.04;
 rIn = 0;
 %
 % mesh settings
@@ -56,7 +56,7 @@ ParaComp = 6;
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [4, 1, 5];
+mat = [1, 2];
 matComsol = [
     2e9, 0.45, 1e3, 1;
     200e9, 0.34, 8e3, 1;
@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-matProp = matComsol;
+% matProp = matComsol;
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
@@ -153,7 +153,7 @@ deltaKxy0 = 50;
 [fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, ...
     BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys);
 
-% plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
 
 %% Calculation of complex band structure
 %
@@ -164,6 +164,7 @@ OmegC = maxf*2*pi;
 % omega intervall increment value
 dOmegC = round(maxf/500) * 2*pi;
 
+% reduce system to boundary nodes -> dynamic condensation
 numredDoF = numDoF-size(unique(IdxPBCOut),1);
 redDoF = 1:numDoF;
 redDoF(:, unique(IdxPBCOut)) = [];
@@ -185,12 +186,13 @@ parfor (idxComp = 1:ceil(OmegC/dOmegC)+1, ParaComp)
     
     omegComp = dOmegC*(idxComp - 1) + 0.1;
     
-    KdynPBC = Ksys - omegComp^2 * Msys;
+    DdynPBC = Ksys - omegComp^2 * Msys;
     
-    [KdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(KdynPBC, KdynPBC, KdynPBC, SlaveDofsPBC);
+    % reduce system to boundary nodes -> dynamic condensation
+    [DdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(DdynPBC, DdynPBC, DdynPBC, SlaveDofsPBC);
     
     [D3GX, D4GX,D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
-       CoefficientMatricesPBCrect(KdynPBCred, IdxPBCCompIn, IdxPBCCompOut,... 
+       CoefficientMatricesPBCrect(DdynPBCred, IdxPBCCompIn, IdxPBCCompOut,... 
        PBCCompTrans, theta);
 
     lambXiGX = quadeig(D3GX, D4GX, transpose(D3GX));

@@ -38,12 +38,12 @@ ComplBandFig = figure('units','normalized','outerposition',[0 0 1 1]);
 
 % set dimensions for publication
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 10, 8];
+ComplBandFig.Position = [20, 10, 7, 5];
 
 %%
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.1 0.3 0.8];
+ComplBandReAx.Position = [0.1 0.15 0.3 0.8];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -51,7 +51,7 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\bf{k})$','interpreter', 'none')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$','interpreter', 'none')
 ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
 
 grid(ComplBandReAx, 'on')
@@ -59,7 +59,7 @@ grid(ComplBandReAx, 'on')
 %%
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.4 0.1 0.5 0.8];
+ComplBandImAx.Position = [0.4 0.15 0.5 0.8];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')
@@ -70,9 +70,7 @@ xticklabels(ComplBandImAx, {' ',' ', 1, ' ', 2, ' ', 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\bf{k})$','interpreter', 'none')
-
-set(ComplBandImAx, 'yticklabel',[])
+xlabel(ComplBandImAx, '$\Im(\mathbf{k})$','interpreter', 'none')
 
 %%
 %
@@ -120,6 +118,8 @@ switch direction
         
         end
 
+        set(ComplBandImAx, 'yticklabel',[])
+
     case 'xm'
 
         switch realPart
@@ -161,7 +161,13 @@ switch direction
 
         end
 
+        set(ComplBandImAx, 'yticklabel',[])
+
     case 'mg'
+
+        % overwrite/swap the alignement of the two plots for this direction
+        ComplBandReAx.Position = [0.6 0.15 0.3 0.8];
+        ComplBandImAx.Position = [0.1 0.15 0.5 0.8];
 
         switch realPart
             case 'pr'   
@@ -182,6 +188,11 @@ switch direction
         xticks(ComplBandReAx, 2:.25:3)
         xticklabels(ComplBandReAx, {'M',' ', ' ',' ', '$\Gamma$'})
 
+        axis(ComplBandImAx, [-3 0 0 (OmegC+0.1)/(2*pi)]);
+        xticks(ComplBandImAx, -3:0.5:0)
+        xticklabels(ComplBandImAx, {-3,' ', -2, ' ', -1, ' ', ' '})
+        ylabel(ComplBandImAx, '$f$ [\unit{Hz}]','interpreter', 'none')
+
         switch imagPart
             case 'pi'
             % CompFreqBandsPIm3
@@ -200,6 +211,8 @@ switch direction
         
         end
 
+        set(ComplBandReAx, 'yticklabel',[])
+
 end
 
 hold(ComplBandReAx, 'off')
@@ -209,7 +222,10 @@ hold(ComplBandReAx, 'off')
 hold(ComplBandImAx, 'off')
 
 % set(findall(ComplBandFig,'type','text'),'fontSize',11)
-set(findall(ComplBandFig,'type','axes'),'fontSize',8)
+set(findall(ComplBandFig,'type','axes'),'fontSize', 5)
+
+plotOffset(ComplBandImAx, 2)
+plotOffset(ComplBandReAx, 2)
 
 ChangeInterpreter(ComplBandFig, 'none')
 

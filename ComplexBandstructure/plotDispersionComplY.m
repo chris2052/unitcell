@@ -37,7 +37,7 @@ ComplBandFig.Position = [20, 10, 10, 8];
 %%
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.1 0.3 0.8];
+ComplBandReAx.Position = [0.1 0.15 0.3 0.8];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -53,7 +53,7 @@ grid(ComplBandReAx, 'on')
 %%
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.4 0.1 0.5 0.8];
+ComplBandImAx.Position = [0.4 0.15 0.5 0.8];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')

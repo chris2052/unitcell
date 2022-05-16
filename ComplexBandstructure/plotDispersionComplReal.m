@@ -30,7 +30,7 @@ ComplBandFig.Position = [20, 10, 10, 8];
 %%
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.1 0.8 0.8];
+ComplBandReAx.Position = [0.1 0.15 0.8 0.8];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -80,7 +80,7 @@ end
 
 axis([0 3 0 (OmegC+0.1)/(2*pi)]);
 xticks(0:1:3);
-xticklabels({'\Gamma', 'X', 'M','\Gamma'});
+xticklabels({'$\Gamma$', 'X', 'M','$\Gamma$'});
 
 hold(ComplBandReAx, 'off')
 
