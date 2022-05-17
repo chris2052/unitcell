@@ -11,11 +11,11 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.10;
+l1 = 0.15;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.04;
+rOut = 0.03;
 rIn = 0;
 %
 % mesh settings
@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-% matProp = matComsol;
+matProp = matComsol;
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
@@ -147,7 +147,7 @@ i=sqrt(-1);
 
 %% calculating and plotting (real) dispersion curves
 
-nBand = 6;
+nBand = 8;
 deltaKxy0 = 50;
 
 [fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, ...

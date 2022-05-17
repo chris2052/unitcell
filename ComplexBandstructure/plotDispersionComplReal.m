@@ -38,7 +38,7 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\bf{k})$','interpreter', 'none')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$','interpreter', 'none')
 ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
 
 grid(ComplBandReAx, 'on')
@@ -90,7 +90,25 @@ hold(ComplBandReAx, 'off')
 % set(findall(ComplBandFig,'type','text'),'fontSize',11)
 set(findall(ComplBandFig,'type','axes'),'fontSize',8)
 
+plotOffset(ComplBandReAx, 2)
+
 ChangeInterpreter(ComplBandFig, 'none')
 
 end
+
+%% --------------------------------------------------------------------------
+function plotOffset(axHandle, xOffset, yOffset)
+%PLOTOFFSET Summary of this function goes here
+%   Detailed explanation goes here
+
+if nargin < 3
+    axHandle.XRuler.TickLabelGapOffset = xOffset;
+    axHandle.YRuler.TickLabelGapOffset = xOffset;
+else
+    axHandle.XRuler.TickLabelGapOffset = xOffset;
+    axHandle.YRuler.TickLabelGapOffset = yOffset;
+end
+
+end
+
 

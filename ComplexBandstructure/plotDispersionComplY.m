@@ -28,16 +28,16 @@ MarkerSize1 = 2;
 DRed=[0.70 0.2 0.2];    % Dark Red
 DBlue=[.2 .2 0.7];      % Dark Blue
 
-ComplBandFig = figure('units','normalized','outerposition',[0 0 1 1]);
+ComplBandFig = figure;%('units','normalized','outerposition',[0 0 1 1]);
 
-% set dimensions for publication
+% set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 10, 8];
+ComplBandFig.Position = [20, 10, 9, 8];
 
 %%
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.15 0.3 0.8];
+ComplBandReAx.Position = [0.15 0.2 0.3 0.7];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -45,7 +45,7 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\bf{k})$','interpreter', 'none')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$','interpreter', 'none')
 ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
 
 grid(ComplBandReAx, 'on')
@@ -53,7 +53,7 @@ grid(ComplBandReAx, 'on')
 %%
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.4 0.15 0.5 0.8];
+ComplBandImAx.Position = [0.45 0.2 0.45 0.7];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')
@@ -64,7 +64,7 @@ xticklabels(ComplBandImAx, {' ',' ', 1, ' ', 2, ' ', 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\bf{k})$','interpreter', 'none')
+xlabel(ComplBandImAx, '$\Im(\mathbf{k})$','interpreter', 'none')
 
 set(ComplBandImAx, 'yticklabel',[])
 
@@ -164,7 +164,10 @@ hold(ComplBandReAx, 'off')
 hold(ComplBandImAx, 'off')
 
 % set(findall(ComplBandFig,'type','text'),'fontSize',11)
-set(findall(ComplBandFig,'type','axes'),'fontSize',8)
+set(findall(ComplBandFig,'type','axes'),'fontSize', 9)
+
+plotOffset(ComplBandImAx, 2)
+plotOffset(ComplBandReAx, 2)
 
 ChangeInterpreter(ComplBandFig, 'none')
 
