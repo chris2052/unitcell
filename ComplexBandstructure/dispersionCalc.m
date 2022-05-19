@@ -1,5 +1,5 @@
-function [fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, ...
-    PBCTrans, BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys)
+function [fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc(nBand, deltaKxy0, ...
+    PBCTrans, BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys, ratio)
 %DISPERSIONCALC Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,10 +20,18 @@ deltaKy = pi / (deltaKxy0 * normdky);
 deltaKxy = pi / (deltaKxy0 * sqrt(normdky^2 + normdkx^2));
 %Aufstellen der Vektoren fuer kx und ky entlang der Brillouin-Zone
 %(s. Abb. oben)
-kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
-    (pi - deltaKxy:-deltaKxy:0)'];
-ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+if ratio ~= 1
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
+    (pi - deltaKxy:-deltaKxy:0)'; zeros(numel(0:deltaKy:pi), 1); (0:deltaKx:pi)'];
+
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'; (0:deltaKy:pi)'; ones(numel(0:deltaKx:pi), 1) * pi];
+else 
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
         (pi - deltaKxy:-deltaKxy:0)'];
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'];
+end
 
 % GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in
 % x-Richtung vorliegt

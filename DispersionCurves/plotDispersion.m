@@ -1,4 +1,4 @@
-function plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec)
+function plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec)
     %PLOTDISPERSION plotting the dispersion-diagrams for given frequencies 
     %   fBand:      matrix of frequencies 
 
@@ -40,19 +40,34 @@ end
 
 box on
 set(gca, 'Layer', 'top')
-pbaspect([1 1 1]);
+% pbaspect([1 1 1]);
 
-xlabel(FreqBandsAx, 'Wellenvektor $\bm{k}$')
-ylabel(FreqBandsAx, 'Frequenz $f$ [\unit{Hz}]')
+xlabel(FreqBandsAx, 'Wellenvektor $\mathbf{k}$')
+ylabel(FreqBandsAx, '$f$ [\unit{Hz}]')
+
+axis(FreqBandsAx, [0 max(kxy0) 0 1.0 * max(max(abs(fBand)))]);
 
 if size(BasisVec, 1) == 1
-    axis(FreqBandsAx, [0 max(kxy0) 0 1.0 * max(max(abs(fBand)))]);
+    
     FreqBandsAx.XTick = [0, max(kxy0)];
     xticklabels(FreqBandsAx, {'$\Gamma$', 'X'})
-else
-    axis(FreqBandsAx, [0 max(kxy0) 0 1.0 * max(max(abs(fBand)))]);
+
+elseif BasisVec(1, 1) == BasisVec(2, 2)
+
     xticks(FreqBandsAx, [0, Xptick, Mptick, max(kxy0)])
     xticklabels(FreqBandsAx, {'$\Gamma$', 'X', 'M', '$\Gamma$'})
+
+else
+    Xptick = numel((0:deltaKx:pi)');
+    Mptick = Xptick + numel(deltaKy:deltaKy:pi);
+%     lMGamma = sqrt(deltaKy^2 + deltaKx^2);
+
+    Gammaptick = Mptick + numel(deltaKxy:deltaKxy:pi);
+
+    Yptick = Gammaptick + numel(deltaKy:deltaKy:pi);
+    xticks(FreqBandsAx, [0, Xptick, Mptick, Gammaptick, Yptick, max(kxy0)])
+    xticklabels(FreqBandsAx, {'$\Gamma$', 'X', 'M', '$\Gamma$', 'Y', 'M'})
+
 end
 
 hold off

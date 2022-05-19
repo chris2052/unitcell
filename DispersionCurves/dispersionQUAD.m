@@ -88,8 +88,8 @@ matPropComsol = [
     200e9, 0.34, 8e3, 1;
     ];
 
-% matProp = material(mat,:);
-matProp = matPropComsol;
+matProp = material(mat,:);
+% matProp = matPropComsol;
 
 
 matName = materialNames(mat);
@@ -150,9 +150,9 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% getting eingenfrequencies
-omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
-f = real(sqrt(omega2) / (2 * pi));
-disp(f);
+% omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+% f = real(sqrt(omega2) / (2 * pi));
+% disp(f);
 
 %% Dispersion Curves
 %
@@ -166,7 +166,7 @@ disp(f);
 % InitialNodes - Knotenmatrix, wie aus gmsh exportiert (mit x y z Koordinate)
 
 % Anzahl der zu berechnenden Baender im Dispersionsdiagramm
-nBand = 6;
+nBand = 8;
 % deltaKxy=pi/deltaKxy0 (Unterteilung der Raender der Brillouinzone
 % in deltaKxy-Werte
 deltaKxy0 = 50;
@@ -222,10 +222,19 @@ deltaKy = pi / (deltaKxy0 * normdky);
 deltaKxy = pi / (deltaKxy0 * sqrt(normdky^2 + normdkx^2));
 %Aufstellen der Vektoren fuer kx und ky entlang der Brillouin-Zone
 %(s. Abb. oben)
-kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
-    (pi - deltaKxy:-deltaKxy:0)'];
-ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+
+if l1 ~= l2
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
+    (pi - deltaKxy:-deltaKxy:0)'; zeros(numel(0:deltaKy:pi), 1); (0:deltaKx:pi)'];
+
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'; (0:deltaKy:pi)'; ones(numel(0:deltaKx:pi), 1) * pi];
+else 
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
         (pi - deltaKxy:-deltaKxy:0)'];
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'];
+end
 
 % GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in
 % x-Richtung vorliegt
@@ -276,7 +285,7 @@ end
 
 %% plotting dispersion curves
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 
 % dimensions for 3 figs (dispersion curves) in a row
 % plotDimensions(gca, gcf, 5.3, 5, .67);

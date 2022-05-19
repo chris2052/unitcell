@@ -56,7 +56,7 @@ ParaComp = 6;
 % loading materials
 load("material.mat");
 % mat: outer material -> inner material
-mat = [1, 2];
+mat = [1, 5];
 matComsol = [
     2e9, 0.45, 1e3, 1;
     200e9, 0.34, 8e3, 1;
@@ -93,7 +93,7 @@ matProp = material(mat,:);
 matName = materialNames(mat);
 matIdx = quads(:, end);
 
-matProp = matComsol;
+% matProp = matComsol;
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
@@ -149,11 +149,13 @@ i=sqrt(-1);
 
 nBand = 8;
 deltaKxy0 = 50;
+ratio = l1/l2;
 
-[fBand, ABand, deltaKx, deltaKy, kxy0] = dispersionCalc(nBand, deltaKxy0, PBCTrans, ...
-    BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys);
+[fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc( ...
+    nBand, deltaKxy0, PBCTrans, BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys, ratio);
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
+plotDimensions(gca, gcf, 18, 12, .8, 0)
 
 %% Calculation of complex band structure
 %
@@ -162,7 +164,8 @@ maxf = ceil(real(max(max(fBand))/10))*10;
 % omega intervall end value for calculation of complex band structure
 OmegC = maxf*2*pi;
 % omega intervall increment value
-dOmegC = round(maxf/500) * 2*pi;
+% dOmegC = round(maxf/500) * 2*pi;
+dOmegC = pi;
 
 % reduce system to boundary nodes -> dynamic condensation
 numredDoF = numDoF-size(unique(IdxPBCOut),1);
@@ -236,9 +239,9 @@ kySC = {kySCGYRe, kySCGYIm, kySCGYCom,kySCYMRe, kySCYMIm, kySCYMCom};
 
 %% plotting
 
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'cr', 'pi');
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'ri');
 
 if l1 ~= l2
 
