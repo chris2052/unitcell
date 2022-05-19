@@ -5,9 +5,9 @@ clearvars
 %  -------------------------------- BEGIN -----------------------------------
 %
 %% creating mesh
-nameMesh = 'corse';
+nameMesh = 'quad9';
 % cell length [m]
-l1 = 0.10;
+l1 = 0.15;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
@@ -19,6 +19,9 @@ lc = 1;
 % factorMesh = 10;
 maxMesh = 40e-3;
 factorMesh = 1;
+
+% order of polynominals (shape functions)
+order = 2;
 
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 
@@ -45,14 +48,11 @@ mat = [1, 5];
 % (plane) "strain", "stress"
 physics = "strain";
 
-% order of polynominals (shape functions)
-order = 2;
-
 % degree of freedom per node; (x, y)-direction
 dof = 2;
 
 % Element Type (number of nodes per element)
-elemType = 'q9';
+% elemType = 'q9';
 
 %  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,10 +65,22 @@ evalin('caller', [nameMesh, 'MESH']);
 
 %% getting parameters
 % number Elements
-numEl = size(msh.QUADS9, 1);
+
+switch order
+    case 1
+        quads = msh.QUADS;
+        elemType = 'q4';
+        
+    case 2
+        quads = msh.QUADS9;
+        elemType = 'q9';
+        
+end
+
+numEl = size(quads, 1);
 
 % number Nodes per Element
-nodPEle = size(msh.QUADS9, 2) - 1;
+nodPEle = size(quads, 2) - 1;
 
 % material matrix E[N/m^2], v[-], rho[kg/m3], t[m]
 matPropComsol = [
@@ -81,7 +93,7 @@ matProp = material(mat,:);
 
 
 matName = materialNames(mat);
-matIdx = msh.QUADS9(:, end);
+matIdx = quads(:, end);
 
 %% getting mesh informations
 % global degree of freedom
@@ -92,9 +104,9 @@ nodesGlob = msh.POS(:, 1:2);
 nodesX = nodesGlob(:, 1);
 nodesY = nodesGlob(:, 2);
 
-connGlob = msh.QUADS9(:, 1:9);
+connGlob = quads(:, 1:nodPEle);
 
-quadsCorner = msh.QUADS9(:, 1:4);
+quadsCorner = quads(:, 1:4);
 nodesCornerX = nodesX(quadsCorner);
 nodesCornerY = nodesY(quadsCorner);
 
@@ -121,7 +133,7 @@ drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 %
 parfor n = 1:numEl
     % Connectivity vector per element
-    connEle = msh.QUADS9(n, 1:nodPEle);
+    connEle = quads(n, 1:nodPEle);
     % Node matrix per element
     nodesEle = msh.POS(connEle, :);
     % gettings material properties per element
@@ -138,9 +150,9 @@ end
 [Ksys, Msys] = FastMatrixAssembly(Elements);
 
 %% getting eingenfrequencies
-omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
-f = real(sqrt(omega2) / (2 * pi));
-disp(f);
+% omega2 = eigs(Ksys, Msys, 10, 'smallestabs');
+% f = real(sqrt(omega2) / (2 * pi));
+% disp(f);
 
 %% Dispersion Curves
 %
@@ -210,10 +222,19 @@ deltaKy = pi / (deltaKxy0 * normdky);
 deltaKxy = pi / (deltaKxy0 * sqrt(normdky^2 + normdkx^2));
 %Aufstellen der Vektoren fuer kx und ky entlang der Brillouin-Zone
 %(s. Abb. oben)
-kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
-    (pi - deltaKxy:-deltaKxy:0)'];
-ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+
+if l1 ~= l2
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
+    (pi - deltaKxy:-deltaKxy:0)'; zeros(numel(0:deltaKy:pi), 1); (0:deltaKx:pi)'];
+
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'; (0:deltaKy:pi)'; ones(numel(0:deltaKx:pi), 1) * pi];
+else 
+    kx0 = [(0:deltaKx:pi)'; ones(numel(deltaKy:deltaKy:pi), 1) * pi; ...
         (pi - deltaKxy:-deltaKxy:0)'];
+    ky0 = [zeros(numel(0:deltaKx:pi), 1); (deltaKy:deltaKy:pi)'; ...
+        (pi - deltaKxy:-deltaKxy:0)'];
+end
 
 % GGf. loeschen einiger Eintraege, falls nur eine Bloch-Randbedinung in
 % x-Richtung vorliegt
@@ -264,7 +285,7 @@ end
 
 %% plotting dispersion curves
 
-plotDispersion(fBand, deltaKx, deltaKy, kxy0, BasisVec);
+plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 
 % dimensions for 3 figs (dispersion curves) in a row
 % plotDimensions(gca, gcf, 5.3, 5, .67);
