@@ -1,4 +1,4 @@
-function plotDispersionComplRealY(kxSC, kySC, OmegC, dOmegC, CompFreqBandsC)
+function plotDispersionComplRealRect(kxSC, kySC, OmegC, dOmegC, CompFreqBandsC)
 %PLOTDISPERSIONCOMPL Summary of this function goes here
 %   Detailed explanation goes here
 
