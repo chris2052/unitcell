@@ -1,4 +1,4 @@
-function plotDispersionComplReal(kxSC, OmegC, dOmegC, CompFreqBandsC)
+function ComplBandFig = plotDispersionComplReal(kxSC, OmegC, dOmegC, CompFreqBandsC)
 %PLOTDISPERSIONCOMPL Summary of this function goes here
 %   Detailed explanation goes here
 

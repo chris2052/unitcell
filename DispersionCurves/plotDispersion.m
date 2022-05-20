@@ -1,6 +1,6 @@
-function plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec, normalized)
-    %PLOTDISPERSION plotting the dispersion-diagrams for given frequencies 
-    %   fBand:      matrix of frequencies 
+function FreqBandsFig = plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec)
+%PLOTDISPERSION plotting the dispersion-diagrams for given frequencies 
+%   fBand:      matrix of frequencies 
 
 LightGrey = [0.7, 0.7, 0.7];
 
@@ -47,42 +47,23 @@ else
 
     Gptick = Mptick + numel(deltaKxy:deltaKxy:pi);
     Yptick = Gptick + numel(deltaKy:deltaKy:pi);
-    Mptick2 = numel(kxy0);
-
-    kxy0_norm = [
-        (1:Xptick)/Xptick, ...
-        (1:(Mptick-Xptick))/(Mptick-Xptick) + 1, ...
-        (1:(Gptick - Mptick))/(Gptick - Mptick) + 2, ...
-        (1:(Yptick - Gptick))/(Yptick - Gptick) + 3, ...
-        (1:(Mptick2 - Yptick))/(Mptick2 - Yptick) + 4];
 
     xticks(FreqBandsAx, [0, Xptick, Mptick, Gptick, Yptick, max(kxy0)])
     xticklabels(FreqBandsAx, {'$\Gamma$', 'X', 'M', '$\Gamma$', 'Y', 'M'})
-
-        if normalized > 0
-    
-        plot(FreqBandsAx, kxy0_norm, fBand, 'k');
-        xticks(FreqBandsAx, [0, 1, 2, 3, 4, 5])
-        xticklabels(FreqBandsAx, {'$\Gamma$', 'X', 'M', '$\Gamma$', 'Y', 'M'})
-
-        else
-
-        plot(FreqBandsAx, kxy0, fBand, 'k');
-    
-            % plotting box with text (freq range) for bandgaps 
-            for bgi = 1:size(indBand, 2)
-                fill(FreqBandsAx, [0 max(kxy0) max(kxy0) 0], ...
-                    [fBandMax(indBand(bgi)) fBandMax(indBand(bgi)) fBandMin(indBand(bgi)) ...
-                    fBandMin(indBand(bgi))], LightGrey);
-                text(FreqBandsAx, 10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, ...
-                    [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ... 
-                    ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz']);
-            end
-
-        end
-
+  
 end
 
+plot(FreqBandsAx, kxy0, fBand, 'k');
+
+% plotting box with text (freq range) for bandgaps 
+for bgi = 1:size(indBand, 2)
+    fill(FreqBandsAx, [0 max(kxy0) max(kxy0) 0], ...
+        [fBandMax(indBand(bgi)) fBandMax(indBand(bgi)) fBandMin(indBand(bgi)) ...
+        fBandMin(indBand(bgi))], LightGrey);
+    text(FreqBandsAx, 10, (fBandMin(indBand(bgi)) + fBandMax(indBand(bgi))) / 2, ...
+        [num2str(bgi), '. Bandl{\"u}cke: ', num2str(fBandMax(indBand(bgi)), '%.0f'), ... 
+        ' - ', num2str(fBandMin(indBand(bgi)), '%.0f'), ' Hz']);
+end
 
 hold off
 

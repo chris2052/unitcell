@@ -154,8 +154,10 @@ ratio = l1/l2;
 [fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc( ...
     nBand, deltaKxy0, PBCTrans, BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys, ratio);
 
-plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec, 1);
+plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 plotDimensions(gca, gcf, 18, 12, .8, 0)
+
+NormalizedFig = plotDispersionNormalized(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 
 %% Calculation of complex band structure
 %
@@ -248,11 +250,11 @@ if l1 ~= l2
     plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'ci');
     plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'ci');
 
-    plotDispersionComplRealRect(kxSC, kySC, OmegC, dOmegC, 0)
+    ComplRealFig = plotDispersionComplRealRect(kxSC, kySC, OmegC, dOmegC, 0);
 
 else 
 
-    plotDispersionComplReal(kxSC, OmegC, dOmegC, 0)
+    ComplRealFig = plotDispersionComplReal(kxSC, OmegC, dOmegC, 0);
 
 end
 
