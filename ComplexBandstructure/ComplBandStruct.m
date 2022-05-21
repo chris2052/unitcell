@@ -148,7 +148,7 @@ i=sqrt(-1);
 %% calculating and plotting (real) dispersion curves
 
 nBand = 8;
-deltaKxy0 = 50;
+deltaKxy0 = 500;
 ratio = l1/l2;
 
 [fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc( ...
@@ -196,7 +196,7 @@ parfor (idxComp = 1:ceil(OmegC/dOmegC)+1, ParaComp)
     % reduce system to boundary nodes -> dynamic condensation
     [DdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(DdynPBC, DdynPBC, DdynPBC, SlaveDofsPBC);
     
-    [D3GX, D4GX,D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
+    [D3GX, D4GX, D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
        CoefficientMatricesPBCrect(DdynPBCred, IdxPBCCompIn, IdxPBCCompOut,... 
        PBCCompTrans, theta);
 

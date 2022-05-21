@@ -12,38 +12,39 @@ InputY=InputIdx(PBCdiff(:,2)>0,:);
 
 OutputX=OutputIdx(PBCdiff(:,1)>0,:);
 OutputY=OutputIdx(PBCdiff(:,2)>0,:);
-[~,InputXYidx]=ismember(InputX,InputY,'rows');
 
+[~,InputXYidx]=ismember(InputX,InputY,'rows');
 InputXYidx(~any(InputXYidx,2),: ) = [];
 InputXY=InputY(InputXYidx,:);
-[~,OutputXYidx]=ismember(OutputX,OutputY,'rows');
 
+[~,OutputXYidx]=ismember(OutputX,OutputY,'rows');
 OutputXYidx(~any(OutputXYidx,2),: ) = [];
 OutputXY=OutputY(OutputXYidx,:);
-[~,InXOutYidx]=ismember(InputX,OutputY,'rows');
 
+[~,InXOutYidx]=ismember(InputX,OutputY,'rows');
 InXOutYidx(~any(InXOutYidx,2),: ) = [];
 InXOutY=OutputY(InXOutYidx,:);
-[~,InYOutXidx]=ismember(InputY,OutputX,'rows');
 
+[~,InYOutXidx]=ismember(InputY,OutputX,'rows');
 InYOutXidx(~any(InYOutXidx,2),: ) = [];
 InYOutX=OutputX(InYOutXidx,:);
-[~,delIdxInX]=ismember([InXOutY;InputXY],InputX,'rows');
 
+[~,delIdxInX]=ismember([InXOutY;InputXY],InputX,'rows');
 delIdxInX(~any(delIdxInX,2),: ) = [];
 InputX(delIdxInX,:)=[];
-[~,delIdxInY]=ismember([InYOutX;InputXY],InputY,'rows');
 
+[~,delIdxInY]=ismember([InYOutX;InputXY],InputY,'rows');
 delIdxInY(~any(delIdxInY,2),: ) = [];
 InputY(delIdxInY,:)=[];
-[~,delIdxOutX]=ismember([InYOutX;OutputXY],OutputX,'rows');
 
+[~,delIdxOutX]=ismember([InYOutX;OutputXY],OutputX,'rows');
 delIdxOutX(~any(delIdxOutX,2),: ) = [];
 OutputX(delIdxOutX,:)=[];
-[~,delIdxOutY]=ismember([InXOutY;OutputXY],OutputY,'rows');
 
+[~,delIdxOutY]=ismember([InXOutY;OutputXY],OutputY,'rows');
 delIdxOutY(~any(delIdxOutY,2),: ) = [];
 OutputY(delIdxOutY,:)=[];
+
 % %Reorder some index vectors
 % OutputYReordered=reshape(fliplr(reshape(OutputY',di,[])),[],1);
 % InputYReordered=reshape(fliplr(reshape(InputY',di,[])),[],1);
@@ -139,7 +140,7 @@ D3MG=[
 % GY-direction
 D3GY=[
     d23+d13+d24+d14, zeros(size(d15)), d18+d28; 
-    d37'+d47'+d35'-d45', zeros(size(d57)), d58+d78; 
+    d37'+d47'+d35'+d45', zeros(size(d57)), d58+d78; 
     d36'+d46', zeros(size(d58')), d68]; 
 
 D4GY=[
