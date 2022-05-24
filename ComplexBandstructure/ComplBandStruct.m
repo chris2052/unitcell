@@ -11,19 +11,19 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.10;
+l1 = 0.13;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.048;
-rIn = 0.045;
+rOut = 0.04;
+rIn = 0;
 
 % mesh settings
 nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 50e-3;
+maxMesh = 40e-3;
 factorMesh = 1;
 
 % order of element shape functions
@@ -33,14 +33,17 @@ dof = 2;
 % ratio
 theta = 1;
 
+% calculate complex band-structure? (1: yes, 0: no)
+calcCompl = 0;
+
 %% materials
 %
 % See 'MaterialList_Isotropic.txt'
 % matrix material (-> coating material) -> core material
-matNames = {'Plexiglass', 'Silicon', 'SteelAlloy1020'};
+matNames = {'Silicon', 'SteelAlloy1020'};
 %
 % thicknes of material layers
-t = [1, 1, 1];
+t = [1, 1];
 %
 %% physics
 %
@@ -157,7 +160,7 @@ i=sqrt(-1);
 %% calculating and plotting (real) dispersion curves
 
 nBand = 8;
-deltaKxy0 = 500;
+deltaKxy0 = 50;
 ratio = l1/l2;
 
 [fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc( ...
@@ -166,9 +169,11 @@ ratio = l1/l2;
 plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 plotDimensions(gca, gcf, 18, 12, .8, 0)
 
-NormalizedFig = plotDispersionNormalized(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
+% NormalizedFig = plotDispersionNormalized(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 
 %% Calculation of complex band structure
+%
+if calcCompl >= 1
 %
 % round to next 10th
 maxf = ceil(real(max(max(fBand))/10))*10;
@@ -267,4 +272,4 @@ else
 
 end
 
-
+end
