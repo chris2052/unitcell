@@ -15,29 +15,29 @@ l1 = 0.10;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.045;
-rIn = 0.044;
+rOut = 0.048;
+rIn = 0.045;
 
 % mesh settings
 nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 40e-3;
+maxMesh = 50e-3;
 factorMesh = 1;
 
 % order of element shape functions
 order = 2;
 % degree of freedom per node; (x, y)-direction
 dof = 2;
-% Element Type (number of nodes per element)
-% elemType = 'q9';
-% ratio lambdax/lambday
+% ratio
 theta = 1;
 
 %% materials
 %
-matNames = {'Plexiglass', 'SiliconNitride', 'Gold'};
+% See 'MaterialList_Isotropic.txt'
+% matrix material (-> coating material) -> core material
+matNames = {'Plexiglass', 'Silicon', 'SteelAlloy1020'};
 %
 % thicknes of material layers
 t = [1, 1, 1];
@@ -54,21 +54,6 @@ minNodeDist = 0.0001;
 % large systems (statistics and machine learning Toolbox for improvement)
 ParaComp = 6;
 
-%% material properties
-
-materials = importMatFile('MaterialList_Isotropic.txt');
-
-mat = zeros(1, size(matNames, 2));
-
-for n = 1:size(matNames, 2)
-    mat(1, n) = find(strcmp(materials, matNames{n}));
-end
-
-matComsol = [
-    1e3, 0.45, 2e9, 1;
-    8e3, 0.34, 200e9, 1;
-    ];
-%
 %  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -93,6 +78,23 @@ end
 numEl = size(quads, 1);
 % number Nodes per Element
 nodPEle = size(quads, 2) - 1;
+%
+%
+%% material properties
+
+materials = importMatFile('MaterialList_Isotropic');
+
+mat = zeros(1, size(matNames, 2));
+
+for n = 1:size(matNames, 2)
+    mat(1, n) = find(strcmp(materials, matNames{n}));
+end
+
+matComsol = [
+    1e3, 0.45, 2e9, 1;
+    8e3, 0.34, 200e9, 1;
+    ];
+%
 % material matrix rho[kg/m3], v[-], E[N/m^2], t[m]
 matProp = materials(mat, 2:4);
 matProp = cell2mat(matProp);
