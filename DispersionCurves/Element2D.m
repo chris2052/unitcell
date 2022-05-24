@@ -10,9 +10,9 @@ function [k, m] = Element2D(nodes, order, matProp, elemType, physics)
 
 cornerNodes = nodes(1:4,:);
 
-E = matProp(1);
+E = matProp(3);
 v = matProp(2);
-rho = matProp(3);
+rho = matProp(1);
 t = matProp(4);
 
 [IntNodes, w] = gaussQuadrature(order);

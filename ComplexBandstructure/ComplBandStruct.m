@@ -11,13 +11,13 @@ close all
 %% geometry settings
 %
 % cell length, x [m]
-l1 = 0.15;
+l1 = 0.10;
 % cell height, y [m]
 l2 = 0.10;
 % radius out and in [m]
-rOut = 0.03;
-rIn = 0;
-%
+rOut = 0.045;
+rIn = 0.044;
+
 % mesh settings
 nameMesh = 'quads9';
 lc = 1;
@@ -35,6 +35,18 @@ dof = 2;
 % ratio lambdax/lambday
 theta = 1;
 
+%% materials
+%
+matNames = {'Plexiglass', 'SiliconNitride', 'Gold'};
+%
+% thicknes of material layers
+t = [1, 1, 1];
+%
+%% physics
+%
+% (plane) "strain", "stress"
+physics = "strain";
+%
 % Minimum node distance to be considered, important for node indexing when line 
 % boundary conditions are applied. Usually this value doesnt have to be changed.
 minNodeDist = 0.0001;
@@ -43,27 +55,20 @@ minNodeDist = 0.0001;
 ParaComp = 6;
 
 %% material properties
-% Matrix material index for PnC=1!     !!v!!
-% For multiple materials use vector: [E1 ; E2;...]. USE SEMICOLON ; !!!
-%                                      !!^!!
-% 1 silicon
-% 2 steel
-% 3 rubber
-% 4 plexiglas
-% 5 wolfram
-% 6 concrete
-%
-% loading materials
-load("material.mat");
-% mat: outer material -> inner material
-mat = [1, 5];
-matComsol = [
-    2e9, 0.45, 1e3, 1;
-    200e9, 0.34, 8e3, 1;
-    ];
-% (plane) "strain", "stress"
-physics = "strain";
 
+materials = importMatFile('MaterialList_Isotropic.txt');
+
+mat = zeros(1, size(matNames, 2));
+
+for n = 1:size(matNames, 2)
+    mat(1, n) = find(strcmp(materials, matNames{n}));
+end
+
+matComsol = [
+    1e3, 0.45, 2e9, 1;
+    8e3, 0.34, 200e9, 1;
+    ];
+%
 %  -------------------------------- END -------------------------------------
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,9 +93,11 @@ end
 numEl = size(quads, 1);
 % number Nodes per Element
 nodPEle = size(quads, 2) - 1;
-% material matrix E[N/m^2], v[-], rho[kg/m3], t[m]
-matProp = material(mat,:);
-matName = materialNames(mat);
+% material matrix rho[kg/m3], v[-], E[N/m^2], t[m]
+matProp = materials(mat, 2:4);
+matProp = cell2mat(matProp);
+matProp(:, 4) = t';
+% matName = materialNames(mat);
 matIdx = quads(:, end);
 
 % matProp = matComsol;
@@ -166,8 +173,8 @@ maxf = ceil(real(max(max(fBand))/10))*10;
 % omega intervall end value for calculation of complex band structure
 OmegC = maxf*2*pi;
 % omega intervall increment value
-% dOmegC = round(maxf/500) * 2*pi;
-dOmegC = pi;
+dOmegC = round(maxf/500) * 2*pi;
+% dOmegC = pi;
 
 % reduce system to boundary nodes -> dynamic condensation
 numredDoF = numDoF-size(unique(IdxPBCOut),1);
@@ -241,7 +248,7 @@ kySC = {kySCGYRe, kySCGYIm, kySCGYCom,kySCYMRe, kySCYMIm, kySCYMCom};
 
 %% plotting
 
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'cr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'ci');
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'ci');
 
