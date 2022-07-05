@@ -10,20 +10,35 @@ close all
 %
 %% geometry settings
 %
-% cell length, x [m]
-l1 = 0.13;
-% cell height, y [m]
-l2 = 0.10;
-% radius out and in [m]
-rOut = 0.04;
-rIn = 0;
+% cell length, x [cm]
+len1 = 1;
+% cell height, y [cm]
+len2 = 1;
+
+% diameter of inclusion (core) [cm]
+dInclusion = 1.4;
+% thickness of coating [cm]; 0, if no coating!
+tCoating = 0.05;
+
+% convert radius out and in [m]
+if tCoating > 0
+    rOut = (dInclusion/2 + tCoating)/100;
+    rIn = (dInclusion/2)/100;
+else
+    rOut = dInclusion/(2 * 100);
+    rIn = 0;
+end
+
+% convert cell length [m]
+l1 = len1/100;
+l2 = len2/100;
 
 % mesh settings
-nameMesh = 'quads9';
+nameMesh = 'quadsTest';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 40e-3;
+maxMesh = 5e-3;
 factorMesh = 1;
 
 % order of element shape functions
@@ -34,16 +49,18 @@ dof = 2;
 theta = 1;
 
 % calculate complex band-structure? (1: yes, 0: no)
-calcCompl = 0;
+calcCompl = 1;
 
 %% materials
 %
 % See 'MaterialList_Isotropic.txt'
 % matrix material (-> coating material) -> core material
-matNames = {'Silicon', 'SteelAlloy1020'};
+matNames = {'Plexiglass', 'Rubber', 'Tin'};
 %
 % thicknes of material layers
-t = [1, 1];
+thickness = 1;
+t = ones(1, size(matNames, 2)) * thickness;
+% t = [1, 1, 1];
 %
 %% physics
 %
@@ -66,6 +83,7 @@ ParaComp = 6;
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 % loading mesh
 evalin('caller', [nameMesh, 'MESH']);
+quadsTestRectMESH
 % quad4 or quad9 elements (depends on `order`)
 switch order
     case 1
@@ -181,7 +199,7 @@ maxf = ceil(real(max(max(fBand))/10))*10;
 OmegC = maxf*2*pi;
 % omega intervall increment value
 dOmegC = round(maxf/500) * 2*pi;
-% dOmegC = pi;
+% dOmegC = 10 * 2*pi;
 
 % reduce system to boundary nodes -> dynamic condensation
 numredDoF = numDoF-size(unique(IdxPBCOut),1);
@@ -254,10 +272,20 @@ kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, 
 kySC = {kySCGYRe, kySCGYIm, kySCGYCom,kySCYMRe, kySCYMIm, kySCYMCom};
 
 %% plotting
-
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'ci');
+%
+% directions: gx, xm, mg, gy, ym
+%
+% real dispersion:
+%   pr: pure real
+%   cr: complex real
+% imaginary dispersion:
+%   pi: pure imaginary
+%   ri: real imaginary
+%   ci: complex imaginary
+%   
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'pi');
 plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'ci');
+plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'pi');
 
 if l1 ~= l2
 
@@ -273,3 +301,5 @@ else
 end
 
 end
+
+plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf)
