@@ -7,7 +7,7 @@ clearvars
 %% creating mesh
 nameMesh = 'quad9';
 % cell length [m]
-l1 = 0.15;
+l1 = 0.10;
 % cell height [m]
 l2 = 0.10;
 % radius out and in [m]
@@ -17,7 +17,7 @@ rIn = 0;
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 40e-3;
+maxMesh = 10e-3;
 factorMesh = 1;
 
 % order of polynominals (shape functions)
@@ -296,7 +296,7 @@ plotOffset(gca, 3);
 
 %% Plotting eigenmodes for specified wave vector
 %%%%%%%%%%%%%%% predefined:
-nPBCEig = 0;
+nPBCEig = 3;
 InitialNodes = nodesGlob;
 PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
 QuadMeshNodes = connGlob(:, 1:4);
