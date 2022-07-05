@@ -51,7 +51,7 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\mathbf{k})$','interpreter', 'latex')
+xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'latex')
 ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'latex')
 
 grid(ComplBandReAx, 'on')
@@ -70,7 +70,7 @@ xticklabels(ComplBandImAx, {' ', ' ', 1, ' ', 2, ' ', 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\mathbf{k})$','interpreter', 'latex')
+xlabel(ComplBandImAx, '$\Im(\bmr{k})$','interpreter', 'latex')
 
 %%
 %
