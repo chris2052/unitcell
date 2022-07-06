@@ -16,7 +16,7 @@ len1 = 1;
 len2 = 1;
 
 % diameter of inclusion (core) [cm]
-dInclusion = 1.4;
+dInclusion = .8;
 % thickness of coating [cm]; 0, if no coating!
 tCoating = 0.05;
 
@@ -34,7 +34,7 @@ l1 = len1/100;
 l2 = len2/100;
 
 % mesh settings
-nameMesh = 'quadsTest';
+nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
@@ -55,7 +55,7 @@ calcCompl = 1;
 %
 % See 'MaterialList_Isotropic.txt'
 % matrix material (-> coating material) -> core material
-matNames = {'Plexiglass', 'Rubber', 'Tin'};
+matNames = {'Plexiglass', 'Rubber', 'Wolfram'};
 %
 % thicknes of material layers
 thickness = 1;
@@ -83,7 +83,7 @@ ParaComp = 6;
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
 % loading mesh
 evalin('caller', [nameMesh, 'MESH']);
-quadsTestRectMESH
+% quadsTestRectMESH
 % quad4 or quad9 elements (depends on `order`)
 switch order
     case 1
@@ -283,23 +283,30 @@ kySC = {kySCGYRe, kySCGYIm, kySCGYCom,kySCYMRe, kySCYMIm, kySCYMCom};
 %   ri: real imaginary
 %   ci: complex imaginary
 %   
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'pi');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'ci');
-plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'pi');
+% plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr', 'pi');
+% plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr', 'pi');
+% plotDispersionCompl(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr', 'pi');
+
+plotDispersionCompl2(kxSC, OmegC, dOmegC, maxf, 'gx', 'pr');
+plotDispersionCompl2(kxSC, OmegC, dOmegC, maxf, 'xm', 'pr');
+plotDispersionCompl2(kxSC, OmegC, dOmegC, maxf, 'mg', 'pr');
 
 if l1 ~= l2
 
-    plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'ci');
-    plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'ci');
+%     plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'gy', 'pr', 'pi');
+%     plotDispersionComplRect(kySC, OmegC, dOmegC, maxf, 'ym', 'pr', 'pi');
+
+    plotDispersionComplRect2(kySC, OmegC, dOmegC, maxf, 'gy', 'pr');
+    plotDispersionComplRect2(kySC, OmegC, dOmegC, maxf, 'ym', 'pr');
 
     ComplRealFig = plotDispersionComplRealRect(kxSC, kySC, OmegC, dOmegC, 0);
+    ComplRealFigAll = plotDispersionComplAllRect(kxSC, kySC, OmegC, dOmegC, maxf, fBand);
 
 else 
 
     ComplRealFig = plotDispersionComplReal(kxSC, OmegC, dOmegC, 0);
+    ComplRealFigAll = plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf, fBand);
 
 end
 
 end
-
-plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf)
