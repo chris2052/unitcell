@@ -37,7 +37,7 @@ ComplBandFig = figure;%('units','normalized','outerposition',[0 0 1 1]);
 
 % set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 7, 6];
+ComplBandFig.Position = [20, 10, 7.5, 7];
 
 %%
 %
@@ -51,7 +51,7 @@ xtickangle(ComplBandReAx, 0);
 
 
 xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'latex')
-ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'latex')
+ylabel(ComplBandReAx, '$f$ [\unit{kHz}]','interpreter', 'latex')
 
 grid(ComplBandReAx, 'on')
 
@@ -109,8 +109,8 @@ switch direction
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm1
-        plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+%         plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         
         set(ComplBandImAx, 'yticklabel',[])
@@ -147,8 +147,8 @@ switch direction
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm2
-        plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+%         plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         
 
@@ -195,8 +195,8 @@ switch direction
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm3
-        plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+%         plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         
         set(ComplBandImAx, 'yticklabel',[]);
@@ -211,12 +211,14 @@ hold(ComplBandReAx, 'off')
 hold(ComplBandImAx, 'off')
 
 % set(findall(ComplBandFig,'type','text'),'fontSize',11)
-set(findall(ComplBandFig,'type','axes'),'fontSize', 6)
+set(findall(ComplBandFig,'type','axes'),'fontSize', 8)
 
-plotOffset(ComplBandImAx, 2)
-plotOffset(ComplBandReAx, 2)
+plotOffset(ComplBandImAx, 4, 2)
+plotOffset(ComplBandReAx, 4, 2)
 
 ChangeInterpreter(ComplBandFig, 'none')
+
+ComplBandReAx.YAxis.Exponent = 0;
 
 end
 

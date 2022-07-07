@@ -16,7 +16,7 @@ len1 = 1;
 len2 = 1;
 
 % diameter of inclusion (core) [cm]
-dInclusion = .8;
+dInclusion = 0.4;
 % thickness of coating [cm]; 0, if no coating!
 tCoating = 0.05;
 
@@ -308,5 +308,7 @@ else
     ComplRealFigAll = plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf, fBand);
 
 end
+
+[bandgabps, minImag] = getBandgaps(kxSC, OmegC, dOmegC, fBand);
 
 end
