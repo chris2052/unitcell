@@ -11,14 +11,14 @@ close all
 %% geometry settings
 %
 % cell length, x [cm]
-len1 = 1;
+len1 = 10;
 % cell height, y [cm]
-len2 = 1;
+len2 = 10;
 
 % diameter of inclusion (core) [cm]
-dInclusion = 0.4;
+dInclusion = 8;
 % thickness of coating [cm]; 0, if no coating!
-tCoating = 0.05;
+tCoating = 0.1;
 
 % convert radius out and in [m]
 if tCoating > 0
@@ -38,7 +38,7 @@ nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 5e-3;
+maxMesh = 40e-3;
 factorMesh = 1;
 
 % order of element shape functions
@@ -79,11 +79,13 @@ ParaComp = 6;
 
 
 %% getting mesh parameters
+
 % creating mesh
 createMeshUnitcell(nameMesh, l1, l2, rOut, rIn, lc, maxMesh, factorMesh, order);
+
 % loading mesh
 evalin('caller', [nameMesh, 'MESH']);
-% quadsTestRectMESH
+
 % quad4 or quad9 elements (depends on `order`)
 switch order
     case 1
@@ -95,12 +97,13 @@ switch order
         elemType = 'q9';
         
 end
+
 % number Elements
 numEl = size(quads, 1);
+
 % number Nodes per Element
 nodPEle = size(quads, 2) - 1;
-%
-%
+
 %% material properties
 
 materials = importMatFile('MaterialList_Isotropic');
@@ -115,7 +118,7 @@ matComsol = [
     1e3, 0.45, 2e9, 1;
     8e3, 0.34, 200e9, 1;
     ];
-%
+
 % material matrix rho[kg/m3], v[-], E[N/m^2], t[m]
 matProp = materials(mat, 2:4);
 matProp = cell2mat(matProp);
@@ -127,6 +130,7 @@ matIdx = quads(:, end);
 
 % global degree of freedom
 numDoF = dof * msh.nbNod;
+
 % xy-components, z is 0
 InitialNodes = msh.POS;
 nodesX = InitialNodes(:, 1);
@@ -164,13 +168,11 @@ end
 %% calculating and plotting dispersion curves
 
 % reindex boundary (periodic boundary conditions, floquet-bloch)
-
 PBC0 = [
     -l1/2, -l2/2, 0, -l1/2, l2/2, 0;
     l1/2, -l2/2, 0, l1/2, l2/2, 0;
     -l1/2, -l2/2, 0, l1/2, -l2/2, 0;
     -l1/2, l2/2, 0, l1/2, l2/2, 0];
-
 
 [IdxPBCIn,IdxPBCOut,PBCTrans,BasisVec]=IndexPBC3D(InitialNodes,dof,PBC0,minNodeDist);  
 i=sqrt(-1);
@@ -195,8 +197,10 @@ if calcCompl >= 1
 %
 % round to next 10th
 maxf = ceil(real(max(max(fBand))/10))*10;
+
 % omega intervall end value for calculation of complex band structure
 OmegC = maxf*2*pi;
+
 % omega intervall increment value
 dOmegC = round(maxf/500) * 2*pi;
 % dOmegC = 10 * 2*pi;
