@@ -1,4 +1,4 @@
-function plotTickDelta(axHandle, xyAxis, delta)
+function plotTickDelta(axHandle, xyAxis, delta, offset)
     %PLOTTICKDELTA Summary of this function goes here
     %   Detailed explanation goes here
 
@@ -14,11 +14,23 @@ end
 
 newLabel = cell(size(label));
 
-for n = delta:delta:size(label, 1)
+if nargin < 4
 
-    newLabel(n) = label(n);
+    for n = delta:delta:size(label, 1)
+    
+        newLabel(n) = label(n);
+    
+    end
 
-end
+else
+
+    for n = offset:delta:size(label, 1)
+    
+        newLabel(n) = label(n);
+    
+    end
+
+end 
 
 switch xyAxis 
 
