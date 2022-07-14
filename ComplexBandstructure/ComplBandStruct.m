@@ -13,10 +13,10 @@ close all
 % cell length, x [cm]
 len1 = 10;
 % cell height, y [cm]
-len2 = 10;
+len2 = 20;
 
 % diameter of inclusion (core) [cm]
-dInclusion = 8;
+dInclusion = 9.6;
 % thickness of coating [cm]; 0, if no coating!
 tCoating = 0.1;
 
@@ -55,7 +55,7 @@ calcCompl = 1;
 %
 % See 'MaterialList_Isotropic.txt'
 % matrix material (-> coating material) -> core material
-matNames = {'Plexiglass', 'Rubber', 'Wolfram'};
+matNames = {'Plexiglass', 'Silicon', 'Wolfram'};
 %
 % thicknes of material layers
 thickness = 1;
@@ -313,6 +313,6 @@ else
 
 end
 
-[bandgabps, minImag] = getBandgaps(kxSC, OmegC, dOmegC, fBand);
+[bandgabps, minImag] = getBandgaps(kxSC, kySC, OmegC, dOmegC, fBand);
 
 end

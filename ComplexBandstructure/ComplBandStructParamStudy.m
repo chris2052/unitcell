@@ -1,7 +1,7 @@
-modifier = 0.2:0.02:0.98;
+modifier = 10:.25:20;
 bandgaps = zeros(size(modifier, 2), 50);
 minImag = zeros(size(modifier, 2), 1);
-logText = fopen(['logCoatingRubber', '.txt'], 'w');
+logText = fopen(['logLengthL2', '.txt'], 'w');
 
 for counter = 1:size(modifier, 2)
 
@@ -17,12 +17,12 @@ for counter = 1:size(modifier, 2)
     % cell length, x [cm]
     len1 = 10;
     % cell height, y [cm]
-    len2 = 10;
+    len2 = modifier(counter);
 
     % diameter of inclusion (core) [cm]
-    dInclusion = 8;
+    dInclusion = 9.6;
     % thickness of coating [cm]; 0, if no coating!
-    tCoating = modifier(counter);
+    tCoating = 0.1;
 
     % convert radius out and in [m]
     if tCoating > 0
@@ -143,7 +143,7 @@ for counter = 1:size(modifier, 2)
     nodesCornerY = nodesY(quadsCorner);
 
     %% drawing mesh
-    drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
+%     drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
     %% generate element stiffnes matrix k
     %
@@ -277,6 +277,8 @@ for counter = 1:size(modifier, 2)
     [currentBand, CurrentMinImag] = getBandgaps(kxSC, OmegC, dOmegC, fBand);
     bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
     minImag(counter) = CurrentMinImag;
+
+%     createLog(logText, counter, l1, l2, dInclusion, tCoating, matProp, matNames)
 
 end
 
