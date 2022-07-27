@@ -13,12 +13,12 @@ close all
 % cell length, x [cm]
 len1 = 10;
 % cell height, y [cm]
-len2 = 20;
+len2 = 10;
 
 % diameter of inclusion (core) [cm]
 dInclusion = 9.6;
-% thickness of coating [cm]; 0, if no coating!
-tCoating = 0.1;
+% thickness of coating [cm]; 0, if no coating!in
+tCoating = .1;
 
 % convert radius out and in [m]
 if tCoating > 0

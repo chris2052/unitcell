@@ -23,14 +23,14 @@ DBlue=[.2 .2 0.7];      % Dark Blue
 
 ComplBandFig = figure('units','normalized','outerposition',[0 0 1 1]);
 
-% set dimensions for publication
+% set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 10, 8];
+ComplBandFig.Position = [20, 10, 7.5, 7];
 
 %%
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.15 0.8 0.8];
+ComplBandReAx.Position = [0.15 0.2 0.75 0.7];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -38,7 +38,7 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\mathbf{k})$','interpreter', 'none')
+xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'none')
 ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
 
 grid(ComplBandReAx, 'on')

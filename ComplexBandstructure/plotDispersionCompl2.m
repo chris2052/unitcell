@@ -51,7 +51,7 @@ xtickangle(ComplBandReAx, 0);
 
 
 xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'latex')
-ylabel(ComplBandReAx, '$f$ [\unit{kHz}]','interpreter', 'latex')
+ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'latex')
 
 grid(ComplBandReAx, 'on')
 

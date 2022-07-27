@@ -274,7 +274,7 @@ for counter = 1:size(modifier, 2)
     kySC = {kySCGYRe, kySCGYIm, kySCGYCom, kySCYMRe, kySCYMIm, kySCYMCom};
 
     %% -------------------comment out if not needed----------------------------
-    [currentBand, CurrentMinImag] = getBandgaps(kxSC, OmegC, dOmegC, fBand);
+    [currentBand, CurrentMinImag] = getBandgaps(kxSC, kySC, OmegC, dOmegC, fBand);
     bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
     minImag(counter) = CurrentMinImag;
 

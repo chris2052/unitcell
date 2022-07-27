@@ -64,12 +64,12 @@ ComplBandFig = figure;%('units','normalized','outerposition',[0 0 1 1]);
 
 % set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 14, 5];
+ComplBandFig.Position = [20, 10, 16, 9];
 
 %% setup real dispersion
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.19 0.38 0.8];
+ComplBandReAx.Position = [0.1 0.19 0.38 0.7];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -87,7 +87,7 @@ grid(ComplBandReAx, 'on')
 %% setup complex (imag) disperion
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.52 0.19 0.38 0.8];
+ComplBandImAx.Position = [0.52 0.19 0.38 0.7];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')
