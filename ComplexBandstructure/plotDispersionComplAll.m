@@ -112,7 +112,7 @@ plot(ComplBandReAx, -PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi
 
 axis(ComplBandReAx, [0 3 0 maxf]);
 xticks(ComplBandReAx, 0:.5:3)
-xticklabels(ComplBandReAx, {'$\Gamma$', ' ', 'X', ' ', 'M', ' ', '\Gamma'})
+xticklabels(ComplBandReAx, {'$\Gamma$', ' ', 'X', ' ', 'M', ' ', '$\Gamma$'})
 
 % plotting box with text (freq range) for bandgaps 
 for bgi = 1:size(indBand, 2)

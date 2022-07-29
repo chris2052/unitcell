@@ -16,9 +16,9 @@ len1 = 10;
 len2 = 10;
 
 % diameter of inclusion (core) [cm]
-dInclusion = 9.6;
+dInclusion = 8;
 % thickness of coating [cm]; 0, if no coating!in
-tCoating = .1;
+tCoating = 0.56;
 
 % convert radius out and in [m]
 if tCoating > 0
