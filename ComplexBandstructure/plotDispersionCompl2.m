@@ -22,9 +22,18 @@ CImkxSCGX = imag(kxSC{3});
 CImkxSCXM = imag(kxSC{6});
 CImkxSCMG = imag(kxSC{9});
 
-omegSCGX = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSC{1},1),1);
-omegSCXM = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSC{4},1),1);
-omegSCMG = repmat((0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),size(kxSC{7},1),1);
+dFreq = (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi);
+
+omegSCGX = repmat(dFreq,size(kxSC{1},1),1);
+omegSCGXplot = omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3));
+
+omegSCXM = repmat(dFreq,size(kxSC{4},1),1);
+omegSCXMplot = omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3));
+
+omegSCMG = repmat(dFreq,size(kxSC{7},1),1);
+omegSCMGplot = omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3));
+
+
 
 %% plotting
 %
@@ -78,38 +87,32 @@ switch direction
     case 'gx'
     
         switch realPart
-            case 'pr'
 
-            % CompFreqBandsPRe1
-            plot(ComplBandReAx, PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi, ...
-                omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3)), 'o', ...
-                'MarkerSize',MarkerSize1, 'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-            
-            case 'cr'
+            case 'pr' % CompFreqBandsPRe1
 
-            % CompFreqBandsCRe1
-            plot(ComplBandReAx, CRekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi, ...
-                omegSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3)),'o', ...
-                'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+                xValues = PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi;
+                yValues = omegSCGXplot;
+           
+            case 'cr' % CompFreqBandsCRe1
+
+                xValues = RekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi;
+                yValues = omegSCGXplot;
        
         end
 
+        plot(ComplBandReAx, xValues, yValues, 'o', 'MarkerSize', MarkerSize1, 'MarkerFaceColor', DBlue, 'MarkerEdgeColor', DBlue);
         axis(ComplBandReAx, [0 1 0 maxf]);
         xticks(ComplBandReAx, 0:.25:1)
         xticklabels(ComplBandReAx, {'$\Gamma$', ' ', ' ', ' ', 'X'})
 
-        
-
         % CompFreqBandsPIm1
-        plot(ComplBandImAx, PImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+        plot(ComplBandImAx, PImkxSCGX, dFreq,'o', 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         % CompFreqBandsCIm1
-        plot(ComplBandImAx, CImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+        plot(ComplBandImAx, CImkxSCGX, dFreq,'o', 'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm1
-%         plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%         plot(ComplBandImAx, RImkxSCGX, dFreq,'o', ...
 %             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         
@@ -122,13 +125,13 @@ switch direction
 
             % CompFreqBandsPRe2
             plot(ComplBandReAx, PRekxSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3))/pi+1, ...
-                omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3)),'o', ...
+                omegSCXMplot,'o', ...
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
           
             case 'cr'
             % CompFreqBandsCRe2
             plot(ComplBandReAx, CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, ...
-                omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'o', ...
+                omegSCXMplot,'o', ...
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
         
         end
@@ -139,15 +142,15 @@ switch direction
 
         
         % CompFreqBandsPIm2
-        plot(ComplBandImAx, PImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+        plot(ComplBandImAx, PImkxSCXM, dFreq,'o', ...
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         % CompFreqBandsCIm2
-        plot(ComplBandImAx, CImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+        plot(ComplBandImAx, CImkxSCXM, dFreq,'o', ...
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm2
-%         plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%         plot(ComplBandImAx, RImkxSCXM, dFreq,'o', ...
 %             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         
@@ -164,13 +167,13 @@ switch direction
             case 'pr'   
             % CompFreqBandsPRe3
             plot(ComplBandReAx, -PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3))/pi+3, ...
-                omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3)),'o', ...
+                omegSCMGplot,'o', ...
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
             case 'cr'
             % CompFreqBandsCRe3
             plot(ComplBandReAx, -CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, ...
-                omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'o', ...
+                omegSCMGplot,'o', ...
                 'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         end 
@@ -187,15 +190,15 @@ switch direction
 
 
         % CompFreqBandsPIm3
-        plot(ComplBandImAx, PImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+        plot(ComplBandImAx, PImkxSCMG, dFreq,'o', ...
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         % CompFreqBandsCIm3
-        plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+        plot(ComplBandImAx, CImkxSCMG, dFreq,'o', ...
             'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
         % CompFreqBandsRIm3
-%         plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+%         plot(ComplBandImAx, RImkxSCMG, dFreq,'o', ...
 %             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         
