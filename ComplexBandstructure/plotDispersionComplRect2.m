@@ -45,8 +45,8 @@ hold(ComplBandReAx, 'on')
 xtickangle(ComplBandReAx, 0);
 
 
-xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'none')
-ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'none')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$')
+ylabel(ComplBandReAx, '$f$ [Hz]')
 
 grid(ComplBandReAx, 'on')
 
@@ -64,7 +64,7 @@ xticklabels(ComplBandImAx, {' ',' ', 1, ' ', 2, ' ', 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\bmr{k})$','interpreter', 'none')
+xlabel(ComplBandImAx, '$\Im(\mathbf{k})$')
 
 set(ComplBandImAx, 'yticklabel',[])
 
@@ -86,7 +86,7 @@ switch direction
             % CompFreqBandsCRe2
             plot(ComplBandReAx, CRekySCGY(round(CRekySCGY,3)>0&round(CRekySCGY,3)~=round(pi,3))/pi+1, ...
                 omegSCGY(round(CRekySCGY,3)>0&round(CRekySCGY,3)~=round(pi,3)),'o', ...
-                'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+                'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         end
 
@@ -100,11 +100,11 @@ switch direction
 
         % CompFreqBandsCIm2
         plot(ComplBandImAx, CImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
         % CompFreqBandsRIm2
-%         plot(ComplBandImAx, RImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-%             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+        plot(ComplBandImAx, RImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
     
     case 'ym'
@@ -122,7 +122,7 @@ switch direction
             % CompFreqBandsCRe1
             plot(ComplBandReAx, CRekySCYM(round(CRekySCYM,3)>0&round(CRekySCYM,3)~=round(pi,3))/pi, ...
                 omegSCYM(round(CRekySCYM,3)>0&round(CRekySCYM,3)~=round(pi,3)),'o', ...
-                'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+                'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
        
         end
 
@@ -138,11 +138,11 @@ switch direction
 
         % CompFreqBandsCIm1
         plot(ComplBandImAx, CImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-            'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
+            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
         % CompFreqBandsRIm1
-%         plot(ComplBandImAx, RImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
-%             'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+        plot(ComplBandImAx, RImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', ...
+            'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
         
 
 end
@@ -154,12 +154,12 @@ hold(ComplBandReAx, 'off')
 hold(ComplBandImAx, 'off')
 
 % set(findall(ComplBandFig,'type','text'),'fontSize',11)
-set(findall(ComplBandFig,'type','axes'),'fontSize', 8)
+set(findall(ComplBandFig,'type','axes'),'fontSize', 11)
 
 plotOffset(ComplBandImAx, 2)
 plotOffset(ComplBandReAx, 2)
 
-ChangeInterpreter(ComplBandFig, 'none')
+ChangeInterpreter(ComplBandFig, 'latex')
 
 end
 

@@ -1,4 +1,4 @@
-function ComplBandFig = plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf, fBand)
+function ComplBandFig = plotDispersionComplAll(kxSC, OmegC, dOmegC, maxf, fBand, ~)
 %PLOTDISPERSIONCOMPLALL Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -55,12 +55,12 @@ ComplBandFig = figure;%('units','normalized','outerposition',[0 0 1 1]);
 
 % set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 14, 7];
+ComplBandFig.Position = [20, 10, 15, 7];
 
 %% setup real dispersion
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.15 0.38 0.8];
+ComplBandReAx.Position = [0.12 0.18 0.38 0.8];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -70,15 +70,15 @@ xticks(ComplBandReAx, 0:.25:3);
 % xticklabels(ComplBandReAx, {'\Gamma', ' ', 'X', ' ', 'M'})
 
 
-xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'latex')
-ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'latex')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$')
+ylabel(ComplBandReAx, '$f$ [Hz]')
 
 grid(ComplBandReAx, 'on')
 
 %% setup complex (imag) disperion
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.52 0.15 0.38 0.8];
+ComplBandImAx.Position = [0.55 0.18 0.38 0.8];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')
@@ -89,7 +89,7 @@ xticklabels(ComplBandImAx, {0, ' ', 1, ' ', 2, ' ', 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\bmr{k})$','interpreter', 'latex')
+xlabel(ComplBandImAx, '$\Im(\mathbf{k})$')
 
 %%
 
@@ -106,9 +106,14 @@ end
 plot(ComplBandReAx, PRekxSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3))/pi, omegSCGX(round(PRekxSCGX,3)>0&round(PRekxSCGX,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
 plot(ComplBandReAx, PRekxSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(PRekxSCXM,3)>0&round(PRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
 plot(ComplBandReAx, -PRekxSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(PRekxSCMG,3)>0&round(PRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-% plot(ComplBandReAx, CRekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi, omegSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-% plot(ComplBandReAx, CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-% plot(ComplBandReAx, -CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
+
+if nargin > 5
+
+    plot(ComplBandReAx, CRekxSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3))/pi, omegSCGX(round(CRekxSCGX,3)>0&round(CRekxSCGX,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
+    plot(ComplBandReAx, CRekxSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3))/pi+1, omegSCXM(round(CRekxSCXM,3)>0&round(CRekxSCXM,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
+    plot(ComplBandReAx, -CRekxSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3))/pi+3, omegSCMG(round(CRekxSCMG,3)>0&round(CRekxSCMG,3)~=round(pi,3)),'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
+
+end
 
 axis(ComplBandReAx, [0 3 0 maxf]);
 xticks(ComplBandReAx, 0:.5:3)
@@ -124,12 +129,12 @@ end
 plot(ComplBandImAx, PImkxSCGX, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
 plot(ComplBandImAx, PImkxSCXM, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
 plot(ComplBandImAx, PImkxSCMG, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-plot(ComplBandImAx, CImkxSCGX, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-plot(ComplBandImAx, CImkxSCXM, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-plot(ComplBandImAx, CImkxSCMG, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue,'LineStyle','none');
-% plot(ComplBandImAx, RImkxSCGX, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-% plot(ComplBandImAx, RImkxSCXM, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
-% plot(ComplBandImAx, RImkxSCMG, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, CImkxSCGX, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, CImkxSCXM, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, CImkxSCMG, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, RImkxSCGX, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, RImkxSCXM, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
+plot(ComplBandImAx, RImkxSCMG, freq,'-ok','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed,'LineStyle','none');
 
 set(ComplBandImAx, 'yticklabel',[]);
 ylabel(ComplBandImAx, ' ');
@@ -138,12 +143,14 @@ hold(ComplBandReAx, 'off');
 
 hold(ComplBandImAx, 'off');
 
-set(findall(ComplBandFig,'type','axes'),'fontSize', 9)
+ComplBandReAx.YAxis.Exponent = 0;
+
+set(findall(ComplBandFig,'type','axes'),'fontSize', 11)
 
 plotOffset(ComplBandImAx, 2)
 plotOffset(ComplBandReAx, 2)
 
-ChangeInterpreter(ComplBandFig, 'none')
+ChangeInterpreter(ComplBandFig, 'latex')
 
 end
 

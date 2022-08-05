@@ -16,9 +16,9 @@ len1 = 10;
 len2 = 10;
 
 % diameter of inclusion (core) [cm]
-dInclusion = 8;
+dInclusion = 9.6;
 % thickness of coating [cm]; 0, if no coating!in
-tCoating = 0.56;
+tCoating = .1;
 
 % convert radius out and in [m]
 if tCoating > 0
@@ -38,7 +38,7 @@ nameMesh = 'quads9';
 lc = 1;
 % maxMesh = 50e-3;
 % factorMesh = 10;
-maxMesh = 40e-3;
+maxMesh = 30e-3;
 factorMesh = 1;
 
 % order of element shape functions
@@ -182,14 +182,80 @@ i=sqrt(-1);
 nBand = 8;
 deltaKxy0 = 50;
 ratio = l1/l2;
-
-[fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0] = dispersionCalc( ...
+tic
+[fBand, ABand, deltaKx, deltaKy, deltaKxy, kxy0, kx0, ky0] = dispersionCalc( ...
     nBand, deltaKxy0, PBCTrans, BasisVec, IdxPBCIn, IdxPBCOut, Ksys, Msys, ratio);
-
+toc
 plotDispersion(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
 plotDimensions(gca, gcf, 18, 12, .8, 0)
 
 % NormalizedFig = plotDispersionNormalized(fBand, deltaKx, deltaKy, deltaKxy, kxy0, BasisVec);
+
+%% Plotting eigenmodes for specified wave vector
+%%%%%%%%%%%%%%% predefined:
+nPBCEig = 0;
+PlotElements = connGlob(:,[1, 5, 2, 6, 3, 7, 4, 8, 1]);
+QuadMeshNodes = connGlob(:, 1:4);
+maxU0 = 1e-3;
+di = dof;
+InitialElements = connGlob;
+Font = 'CMU Serif';
+colMap = 'jet';
+PMshStudy = 0;
+%%%%%%%%%%%%%%%
+% KPlotPBCEF ist ein vorgegebener Wellenvektor, fuer den die Eigenform geplottet
+% werden soll, beispielswiese [0; 0] waere die Stelle Gamma im Dispersionsdiagramm 
+% und [pi; 0] die Stelle X, [pi; pi] M
+KPlotPBCEF = [pi; pi];
+kxEF = KPlotPBCEF(1);
+kyEF = KPlotPBCEF(2);
+% Index von KPlotPBCEF in der Matrix der Wellenvektoren bestimmen
+[~, indxKEF] = ismember(KPlotPBCEF', [kx0 ky0], 'rows'); 
+
+i = sqrt(-1);
+% Lambda_x und Lamda_y fuer die vorgegebenen Wellenvektoren bestimmen
+lambX = exp(sqrt(-1) * kxEF); 
+lambY = exp(sqrt(-1) * kyEF);
+% Transformationsmatrix LambdaR berechnen
+[~, ~, LambdaR] = ApplyBlochBC2D(Ksys, Msys, IdxPBCIn, IdxPBCOut, lambX, ...
+    lambY, PBCTrans); 
+% nPBCEig ist die Anzahl der zu plottenden Eigenformen
+if nPBCEig > 0 && nPBCEig <= size(fBand, 1)
+    % Achsenlimits
+    axLimitsS2 = 1.0 * [
+        unique(min(InitialNodes(:, 1))), ...
+        unique(max(InitialNodes(:, 1))), ...
+        unique(min(InitialNodes(:, 2))), ...
+        unique(max(InitialNodes(:, 2)))]; 
+    % Schleife zum Plotten aller Eigenformen
+    for i = 1:nPBCEig
+
+        figure
+        % ABand sind die Eigenformen aus deiner Berechnung, hier werden dann die 
+        % Randbedingungen wieder eingebaut
+        APBCEF = real(LambdaR * ABand(:, i, indxKEF)); 
+        % Die zugehoerige Frequenz wird ausgelesen
+        PBCfiPlot = fBand(i, indxKEF); 
+        % Normierung der Eigenformen auf eine vorgegebene maximale Amplitude maxU0
+        PlotFakS2 = maxU0 / unique(max(max(abs(APBCEF)))); 
+        % Umsortierung der Eigenformen nach Anteil in x - und y - Richtung, 
+        % also [u1 v1; u2 v2; …]
+        AEigS2Plot = PlotFakS2 * [APBCEF(1:di:end) APBCEF(2:di:end) * (di - 1)]; 
+        % Resultierende Verschiebung
+        totalDispEigS2 = (AEigS2Plot(:, 1).^2 + (di - 1) ...
+            * AEigS2Plot(:, 2).^2).^(0.5); 
+
+        Plot2DPBCEigenmodes(InitialNodes(:, 1:2), InitialElements(:, 1:nodPEle), ...
+            PlotElements(:, 1:end), QuadMeshNodes, zeros(size(AEigS2Plot)), ...
+            totalDispEigS2, i, PBCfiPlot, KPlotPBCEF, axLimitsS2, ...
+            colMap, PMshStudy);
+            SetColorbar
+        axis off
+%         plotDimensions(gcf, gca, 11, 6, .8)
+  
+    end
+
+end
 
 %% Calculation of complex band structure
 %
