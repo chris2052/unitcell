@@ -64,12 +64,12 @@ ComplBandFig = figure;%('units','normalized','outerposition',[0 0 1 1]);
 
 % set dimensions
 ComplBandFig.Units = 'centimeters';
-ComplBandFig.Position = [20, 10, 16, 9];
+ComplBandFig.Position = [20, 10, 15, 7];
 
 %% setup real dispersion
 %
 ComplBandReAx = axes(ComplBandFig);
-ComplBandReAx.Position = [0.1 0.19 0.38 0.7];
+ComplBandReAx.Position = [0.12 0.18 0.38 0.8];
 ComplBandReAx.Box = 'on';
 
 hold(ComplBandReAx, 'on')
@@ -79,15 +79,15 @@ xticks(ComplBandReAx, 0:.25:3);
 % xticklabels(ComplBandReAx, {'\Gamma', ' ', 'X', ' ', 'M'})
 
 
-xlabel(ComplBandReAx, '$\Re(\bmr{k})$','interpreter', 'latex')
-ylabel(ComplBandReAx, '$f$ [\unit{Hz}]','interpreter', 'latex')
+xlabel(ComplBandReAx, '$\Re(\mathbf{k})$')
+ylabel(ComplBandReAx, '$f$ [Hz]')
 
 grid(ComplBandReAx, 'on')
 
 %% setup complex (imag) disperion
 %
 ComplBandImAx = axes(ComplBandFig);
-ComplBandImAx.Position = [0.52 0.19 0.38 0.7];
+ComplBandImAx.Position = [0.55 0.18 0.38 0.8];
 ComplBandImAx.Box = 'on';
 
 hold(ComplBandImAx, 'on')
@@ -98,7 +98,7 @@ xticklabels(ComplBandImAx, {0, 1, 2, 3})
 
 grid(ComplBandImAx, 'on')
 
-xlabel(ComplBandImAx, '$\Im(\bmr{k})$','interpreter', 'latex')
+xlabel(ComplBandImAx, '$\Im(\mathbf{k})$')
 
 %%
 
@@ -147,11 +147,11 @@ plot(ComplBandImAx, CImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2
 plot(ComplBandImAx, CImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 plot(ComplBandImAx, CImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', 'MarkerSize',MarkerSize1,'MarkerFaceColor',DBlue,'MarkerEdgeColor',DBlue);
 
-% plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% plot(ComplBandImAx, RImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
-% plot(ComplBandImAx, RImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+plot(ComplBandImAx, RImkxSCGX, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+plot(ComplBandImAx, RImkxSCXM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+plot(ComplBandImAx, RImkxSCMG, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+plot(ComplBandImAx, RImkySCGY, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o','MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
+plot(ComplBandImAx, RImkySCYM, (0.1:dOmegC:(ceil(OmegC/dOmegC))*dOmegC + 0.1)/(2*pi),'o', 'MarkerSize',MarkerSize1,'MarkerFaceColor',DRed,'MarkerEdgeColor',DRed);
 
 set(ComplBandImAx, 'yticklabel',[]);
 ylabel(ComplBandImAx, ' ');
@@ -160,12 +160,12 @@ hold(ComplBandReAx, 'off');
 
 hold(ComplBandImAx, 'off');
 
-set(findall(ComplBandFig,'type','axes'),'fontSize', 9)
+set(findall(ComplBandFig,'type','axes'),'fontSize', 11)
 
 plotOffset(ComplBandImAx, 2)
 plotOffset(ComplBandReAx, 2)
 
-ChangeInterpreter(ComplBandFig, 'none')
+ChangeInterpreter(ComplBandFig, 'latex')
 
 end
 
