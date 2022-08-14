@@ -1,7 +1,7 @@
-modifier = 10:.25:20;
+modifier = .1:.1:4.4;
 bandgaps = zeros(size(modifier, 2), 50);
 minImag = zeros(size(modifier, 2), 1);
-logText = fopen(['logLengthL2', '.txt'], 'w');
+logText = fopen(['logCoat', '.txt'], 'w');
 
 for counter = 1:size(modifier, 2)
 
@@ -17,12 +17,12 @@ for counter = 1:size(modifier, 2)
     % cell length, x [cm]
     len1 = 10;
     % cell height, y [cm]
-    len2 = modifier(counter);
+    len2 = 10;
 
     % diameter of inclusion (core) [cm]
-    dInclusion = 9.6;
+    dInclusion = 9.8 - 2*modifier(counter);
     % thickness of coating [cm]; 0, if no coating!
-    tCoating = 0.1;
+    tCoating = modifier(counter);
 
     % convert radius out and in [m]
     if tCoating > 0
@@ -51,6 +51,9 @@ for counter = 1:size(modifier, 2)
     dof = 2;
     % ratio
     theta = 1;
+
+    % calculate complex band-structure? (1: yes, 0: no)
+    calcCompl = 1;
 
     %% materials
     %
@@ -115,9 +118,9 @@ for counter = 1:size(modifier, 2)
     end
 
     matComsol = [
-            1e3, 0.45, 2e9, 1;
-            8e3, 0.34, 200e9, 1;
-            ];
+        1e3, 0.45, 2e9, 1;
+        8e3, 0.34, 200e9, 1;
+        ];
 
     % material matrix rho[kg/m3], v[-], E[N/m^2], t[m]
     matProp = materials(mat, 2:4);
@@ -143,7 +146,7 @@ for counter = 1:size(modifier, 2)
     nodesCornerY = nodesY(quadsCorner);
 
     %% drawing mesh
-%     drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
+%         drawingMesh2D(nodesCornerX, nodesCornerY, 'none', '-', 'k');
 
     %% generate element stiffnes matrix k
     %
@@ -193,96 +196,100 @@ for counter = 1:size(modifier, 2)
 
     %% Calculation of complex band structure
 
-    % round to next 10th
-    maxf = ceil(real(max(max(fBand)) / 10)) * 10;
+    if calcCompl > 0
+        % round to next 10th
+        maxf = ceil(real(max(max(fBand)) / 10)) * 10;
 
-    % omega intervall end value for calculation of complex band structure
-    OmegC = maxf * 2 * pi;
+        % omega intervall end value for calculation of complex band structure
+        OmegC = maxf * 2 * pi;
 
-    % omega intervall increment value
-    dOmegC = round(maxf / 500) * 2 * pi;
-    % dOmegC = 10 * 2*pi;
-
-    % reduce system to boundary nodes -> dynamic condensation
-    numredDoF = numDoF - size(unique(IdxPBCOut), 1);
-    redDoF = 1:numDoF;
-    redDoF(:, unique(IdxPBCOut)) = [];
-    SIdxPBCIn = unique(sort(reshape(IdxPBCIn, [], 1)));
-    SIdxPBCOut = unique(sort(reshape(IdxPBCOut, [], 1)));
-    SlaveDofsPBC = 1:numDoF;
-    SlaveDofsPBC([SIdxPBCIn, SIdxPBCOut]) = [];
-    CompNodes = InitialNodes;
-    CompNodes(unique(ceil(SlaveDofsPBC / dof)), :) = [];
-    [IdxPBCCompIn, IdxPBCCompOut, PBCCompTrans, ~] = IndexPBC3D(CompNodes, dof, PBC0, ...
-        minNodeDist);
-
-    tic
-
-%     updateWaitbarCompBands = waitbarParfor(ceil(OmegC / dOmegC) + 1, ...
-%     "Calculation of complex band structure in progress...");
-
-    parfor (idxComp = 1:ceil(OmegC / dOmegC) + 1, ParaComp)
-
-        omegComp = dOmegC * (idxComp - 1) + 0.1;
-
-        DdynPBC = Ksys - omegComp^2 * Msys;
+        % omega intervall increment value
+        dOmegC = round(maxf / 500) * 2 * pi;
+        % dOmegC = 10 * 2*pi;
 
         % reduce system to boundary nodes -> dynamic condensation
-        [DdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(DdynPBC, DdynPBC, DdynPBC, SlaveDofsPBC);
+        numredDoF = numDoF - size(unique(IdxPBCOut), 1);
+        redDoF = 1:numDoF;
+        redDoF(:, unique(IdxPBCOut)) = [];
+        SIdxPBCIn = unique(sort(reshape(IdxPBCIn, [], 1)));
+        SIdxPBCOut = unique(sort(reshape(IdxPBCOut, [], 1)));
+        SlaveDofsPBC = 1:numDoF;
+        SlaveDofsPBC([SIdxPBCIn, SIdxPBCOut]) = [];
+        CompNodes = InitialNodes;
+        CompNodes(unique(ceil(SlaveDofsPBC / dof)), :) = [];
+        [IdxPBCCompIn, IdxPBCCompOut, PBCCompTrans, ~] = IndexPBC3D(CompNodes, dof, PBC0, ...
+            minNodeDist);
 
-        [D3GX, D4GX, D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
-            CoefficientMatricesPBCrect(DdynPBCred, IdxPBCCompIn, IdxPBCCompOut, ...
-            PBCCompTrans, theta);
+        tic
 
-        lambXiGX = quadeig(D3GX, D4GX, transpose(D3GX));
-        kxSCGX0{idxComp} = i * log(lambXiGX);
-        lambXiXM = quadeig(D3XM, D4XM, transpose(D3XM));
-        kxSCXM0{idxComp} = i * log(lambXiXM);
-        lambXiMG = polyeig(transpose(D1MG), transpose(D2MG), D3MG, D2MG, D1MG);
-        kxSCMG0{idxComp} = i * log(lambXiMG);
+        %     updateWaitbarCompBands = waitbarParfor(ceil(OmegC / dOmegC) + 1, ...
+        %     "Calculation of complex band structure in progress...");
 
-        lambYiGY = quadeig(D3GY, D4GY, transpose(D3GY));
-        kySCGY0{idxComp} = i * log(lambYiGY);
-        lambYiYM = quadeig(D3YM, D4YM, transpose(D3YM));
-        kySCYM0{idxComp} = i * log(lambYiYM);
+        parfor (idxComp = 1:ceil(OmegC / dOmegC) + 1, ParaComp)
 
-%         updateWaitbarCompBands();
-    end
+            omegComp = dOmegC * (idxComp - 1) + 0.1;
 
-    CompBandStepTime = toc;
-    CompBandStepTime = CompBandStepTime / (ceil(OmegC / dOmegC) + 1);
-    kxSCGX = cell2mat(kxSCGX0);
-    kxSCXM = cell2mat(kxSCXM0);
-    kxSCMG = cell2mat(kxSCMG0);
+            DdynPBC = Ksys - omegComp^2 * Msys;
 
-    kySCGY = cell2mat(kySCGY0);
-    kySCYM = cell2mat(kySCYM0);
+            % reduce system to boundary nodes -> dynamic condensation
+            [DdynPBCred, ~, ~, ~, ~] = FastGuyanReduction(DdynPBC, DdynPBC, DdynPBC, SlaveDofsPBC);
 
-    fprintf(['Calculation time for one frequency step is approximately ', ...
+            [D3GX, D4GX, D3XM, D4XM, D1MG, D2MG, D3MG, D3GY, D4GY, D3YM, D4YM] = ...
+                CoefficientMatricesPBCrect(DdynPBCred, IdxPBCCompIn, IdxPBCCompOut, ...
+                PBCCompTrans, theta);
+
+            lambXiGX = quadeig(D3GX, D4GX, transpose(D3GX));
+            kxSCGX0{idxComp} = i * log(lambXiGX);
+            lambXiXM = quadeig(D3XM, D4XM, transpose(D3XM));
+            kxSCXM0{idxComp} = i * log(lambXiXM);
+            lambXiMG = polyeig(transpose(D1MG), transpose(D2MG), D3MG, D2MG, D1MG);
+            kxSCMG0{idxComp} = i * log(lambXiMG);
+
+            lambYiGY = quadeig(D3GY, D4GY, transpose(D3GY));
+            kySCGY0{idxComp} = i * log(lambYiGY);
+            lambYiYM = quadeig(D3YM, D4YM, transpose(D3YM));
+            kySCYM0{idxComp} = i * log(lambYiYM);
+
+            %         updateWaitbarCompBands();
+        end
+
+        CompBandStepTime = toc;
+        CompBandStepTime = CompBandStepTime / (ceil(OmegC / dOmegC) + 1);
+        kxSCGX = cell2mat(kxSCGX0);
+        kxSCXM = cell2mat(kxSCXM0);
+        kxSCMG = cell2mat(kxSCMG0);
+
+        kySCGY = cell2mat(kySCGY0);
+        kySCYM = cell2mat(kySCYM0);
+
+        fprintf(['Calculation time for one frequency step is approximately ', ...
             num2str(CompBandStepTime), ' [s].', '\n'])
 
-    [kxSCGXRe, kxSCGXIm, kxSCGXCom] = filterCBS_2DFEM(kxSCGX);
-    [kxSCXMRe, kxSCXMIm, kxSCXMCom] = filterCBS_2DFEM(kxSCXM);
-    [kxSCMGRe, kxSCMGIm, kxSCMGCom] = filterCBS_2DFEM(kxSCMG);
+        [kxSCGXRe, kxSCGXIm, kxSCGXCom] = filterCBS_2DFEM(kxSCGX);
+        [kxSCXMRe, kxSCXMIm, kxSCXMCom] = filterCBS_2DFEM(kxSCXM);
+        [kxSCMGRe, kxSCMGIm, kxSCMGCom] = filterCBS_2DFEM(kxSCMG);
 
-    kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, ...
+        kxSC = {kxSCGXRe, kxSCGXIm, kxSCGXCom, kxSCXMRe, kxSCXMIm, kxSCXMCom, kxSCMGRe, ...
             kxSCMGIm, kxSCMGCom};
 
-    [kySCGYRe, kySCGYIm, kySCGYCom] = filterCBS_2DFEM(kySCGY);
-    [kySCYMRe, kySCYMIm, kySCYMCom] = filterCBS_2DFEM(kySCYM);
+        [kySCGYRe, kySCGYIm, kySCGYCom] = filterCBS_2DFEM(kySCGY);
+        [kySCYMRe, kySCYMIm, kySCYMCom] = filterCBS_2DFEM(kySCYM);
 
-    kySC = {kySCGYRe, kySCGYIm, kySCGYCom, kySCYMRe, kySCYMIm, kySCYMCom};
+        kySC = {kySCGYRe, kySCGYIm, kySCGYCom, kySCYMRe, kySCYMIm, kySCYMCom};
+
+    end
 
     %% -------------------comment out if not needed----------------------------
-    [currentBand, CurrentMinImag] = getBandgaps(kxSC, kySC, OmegC, dOmegC, fBand);
-    bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
-    minImag(counter) = CurrentMinImag;
+        [currentBand, currentMinImag] = getBandgapsCompl(kxSC, kySC, OmegC, dOmegC, fBand);
+%         currentBand = getBandgaps(fBand);
+        bandgaps(counter, 1:size(currentBand, 2)) = currentBand;
+        minImag(counter) = currentMinImag;
 
-%     createLog(logText, counter, l1, l2, dInclusion, tCoating, matProp, matNames)
+    %     createLog(logText, counter, l1, l2, dInclusion, tCoating, matProp, matNames)
 
 end
 
 fclose(logText);
 
-plotBandgaps(bandgaps, 'Ummantelung $a$ [\unit{cm}]', modifier)
-plotMinImag(minImag, 'Ummantelung $a$ [\unit{cm}]', modifier)
+plotBandgaps(bandgaps, 'Radius $r$ [cm]', modifier)
+plotMinImag(minImag, 'Radius $r$ [cm]', modifier)
