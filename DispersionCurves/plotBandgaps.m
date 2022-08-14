@@ -2,8 +2,8 @@ function plotBandgaps(bandgaps, label, xtick)
 %BAND Summary of this function goes here
 %   Detailed explanation goes here
 
-fig = figure;
-ax = axes(fig);
+complBandFig = figure;
+complBandAx = axes(complBandFig);
 LightGrey = [0.7, 0.7, 0.7];
 
 for n = 2:2:size(bandgaps, 2)
@@ -13,27 +13,29 @@ for n = 2:2:size(bandgaps, 2)
         flipPos = flipud(pos);
         xVal = [pos; flipPos];
         bgVal = [col(pos,1); col(flipPos,2)];
-        fill(ax, xVal, bgVal, LightGrey);
-        hold(ax, 'on')
+        fill(complBandAx, xVal, bgVal, LightGrey);
+        hold(complBandAx, 'on')
     end
 end
 
-hold(ax, 'off')
+hold(complBandAx, 'off')
 
-grid(ax, 'on')
+grid(complBandAx, 'on')
 
-axis(ax, [0, inf, 0, inf])
-xlabel(ax, label);
-xticks(ax, 1:size(bandgaps,1));
+axis(complBandAx, [0, inf, 0, inf])
+xlabel(complBandAx, label);
+xticks(complBandAx, 1:size(bandgaps,1));
 
 if ~iscell(xtick)
-    set(ax, 'XTickLabel', cellstr(get(gca, 'XTickLabel')))
+    set(complBandAx, 'XTickLabel', cellstr(get(gca, 'XTickLabel')))
 end
 
-xticklabels(ax, compose('%.2f', xtick));
-ylabel(ax, 'Frequenz $f$ [\unit{Hz}]');
+xticklabels(complBandAx, compose('%.2f', xtick));
+ylabel(complBandAx, 'Frequenz $f$ [Hz]');
 
-ChangeInterpreter(fig, 'none')
+set(findall(complBandAx,'type','axes'),'fontSize', 11)
+
+ChangeInterpreter(complBandFig, 'latex')
 
 end
 
